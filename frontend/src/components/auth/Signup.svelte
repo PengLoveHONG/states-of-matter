@@ -1,11 +1,14 @@
 <script lang="ts">
   import {createEventDispatcher} from "svelte";
-  import {socket} from "services/socket";
-  import {authStore} from "stores";
+  import {socketService} from "services";
+  import {authStore} from "stores/data";
 
   const dispatch = createEventDispatcher();
 
-  const onSignup = (): void => { socket.emit("signupReq", $authStore.signupForm); };
+  const onSignup = (): void => {
+    socketService.emit("signupReq", $authStore.signupForm);
+  };
+
   const onGotoSignin = (): void => { dispatch("gotoSignin"); };
 </script>
 

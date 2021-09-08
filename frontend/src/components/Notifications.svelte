@@ -1,7 +1,8 @@
 <script lang="ts">
   import {fade, fly} from "svelte/transition";
+  import {notificationStore} from "stores/view";
+
   import type {FlyParams} from "svelte/transition";
-  import notifications from "stores/notifications";
 
   const inFly: FlyParams = {x: 100, duration: 225};
 </script>
@@ -23,7 +24,7 @@
 </style>
 
 <div class="notifications">
-  {#each $notifications as {msg}}
+  {#each $notificationStore as {msg}}
     <div class="notification" in:fly={inFly} out:fade>
       {msg}
     </div>

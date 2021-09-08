@@ -1,8 +1,7 @@
 <script lang="ts">
   import Card from "./Card.svelte";
   import Hero from "./Hero.svelte";
-  import cards from "data/cards";
-  import heroes from "data/heroes";
+  import {cards, heroes} from "data";
 
   const klassMap = new Map([
     [0, "Neutral"],

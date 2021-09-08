@@ -1,18 +1,16 @@
 <script lang="ts">
   import {createEventDispatcher} from "svelte";
-  import {socket} from "services/socket";
-  import {authStore} from "stores";
+  import {socketService} from "services";
+  import {authStore} from "stores/data";
 
   const dispatch = createEventDispatcher();
 
   const onSignin = (): void => {
     const {username} = $authStore.signinForm;
-    socket.emit("getPrivateKeyHashReq", {username});
+    socketService.emit("getPrivateKeyHashReq", {username});
   };
 
-  const onGotoSignup = (): void => {
-    dispatch("gotoSignup");
-  };
+  const onGotoSignup = (): void => { dispatch("gotoSignup"); };
 </script>
 
 <style>
@@ -49,7 +47,9 @@
   </div>
 
   <div class="form__field">
-    <button class="btn--raised-primary form__field__submit" on:click|preventDefault={onSignin}>
+    <button
+      class="btn--raised-primary form__field__submit"
+      on:click|preventDefault={onSignin}>
       SIGN IN
     </button>
   </div>

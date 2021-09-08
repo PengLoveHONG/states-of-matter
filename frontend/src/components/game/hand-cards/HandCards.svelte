@@ -1,6 +1,6 @@
 <script>
   import Card from "../Card.svelte";
-  import cards from "data/cards";
+  import {cards} from "data";
 
   export let belongsTo;
 </script>

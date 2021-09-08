@@ -3,7 +3,7 @@
   import {FontAwesome} from "components";
   import {socket} from "services/socket";
   import {openModal} from "stores/modal";
-  import {playerStore} from "stores";
+  import {playerStore} from "stores/data";
   import chat, {generateChat} from "stores/chatMessages";
   import social from "stores/social";
 

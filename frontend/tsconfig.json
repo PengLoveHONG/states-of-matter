@@ -5,13 +5,16 @@
   "compilerOptions": {
     "baseUrl": "./src",
     "paths": {
-      "components": ["shared/components.ts"],
-      "data/*": ["shared/data/*"],
-      "models/*": ["shared/models/*"],
-      "responses": ["shared/responses.ts"],
-      "services/*": ["shared/services/*"],
-      "stores/*": ["shared/stores/*"],
-      "stores": ["shared/modules/stores.ts"]
+      "components": ["components"],
+      "data": ["data"],
+      "models/*": ["models/*"],
+      "models/data": ["models/data"],
+      "responses": ["responses"],
+      "services": ["services"],
+      "services/*": ["services/*"],
+      "stores": ["stores"],
+      "stores/*": ["stores/*"],
+      "stores/data": ["stores/data"]
     }
   }
 }

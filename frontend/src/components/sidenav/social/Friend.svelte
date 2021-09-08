@@ -3,8 +3,8 @@
   import {slide} from "svelte/transition";
   import type {SlideParams} from "svelte/transition";
   import {FontAwesome} from "components";
-  import {status} from "models/Player";
-  import type {Friend} from "models/Social";
+  import {status} from "models/data/Player";
+  import type {Friend} from "models/view/Social";
   import {openModal} from "stores/modal";
   import social from "stores/social";
 

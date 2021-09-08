@@ -4,8 +4,8 @@ backend/dist
 backend/node_modules
 
 contract/inc
-contract/som/som.abi
-contract/som/som.wasm
+contract/som.abi
+contract/som.wasm
 
 frontend/dist
 frontend/node_modules

@@ -1,0 +1,584 @@
+{
+    "____comment": "This file was generated with eosio-abigen. DO NOT EDIT ",
+    "version": "eosio::abi/1.1",
+    "types": [
+        {
+            "new_type_name": "deck_cards_t",
+            "type": "deck_card_t[]"
+        },
+        {
+            "new_type_name": "decks_t",
+            "type": "deck_t[]"
+        }
+    ],
+    "structs": [
+        {
+            "name": "acceptfriend",
+            "base": "",
+            "fields": [
+                {
+                    "name": "friendname",
+                    "type": "name"
+                },
+                {
+                    "name": "public_key",
+                    "type": "public_key"
+                },
+                {
+                    "name": "signature",
+                    "type": "signature"
+                }
+            ]
+        },
+        {
+            "name": "account_t",
+            "base": "",
+            "fields": [
+                {
+                    "name": "socket_id",
+                    "type": "string"
+                },
+                {
+                    "name": "status",
+                    "type": "uint8"
+                },
+                {
+                    "name": "xp",
+                    "type": "uint16"
+                },
+                {
+                    "name": "lv",
+                    "type": "uint16"
+                },
+                {
+                    "name": "deck_id",
+                    "type": "uint8"
+                },
+                {
+                    "name": "avatar_id",
+                    "type": "uint8"
+                },
+                {
+                    "name": "lobby_id",
+                    "type": "uint32"
+                },
+                {
+                    "name": "game_id",
+                    "type": "uint32"
+                }
+            ]
+        },
+        {
+            "name": "addfriend",
+            "base": "",
+            "fields": [
+                {
+                    "name": "friendname",
+                    "type": "name"
+                },
+                {
+                    "name": "public_key",
+                    "type": "public_key"
+                },
+                {
+                    "name": "signature",
+                    "type": "signature"
+                }
+            ]
+        },
+        {
+            "name": "blockfriend",
+            "base": "",
+            "fields": [
+                {
+                    "name": "friendname",
+                    "type": "name"
+                },
+                {
+                    "name": "public_key",
+                    "type": "public_key"
+                },
+                {
+                    "name": "signature",
+                    "type": "signature"
+                }
+            ]
+        },
+        {
+            "name": "challengee_t",
+            "base": "",
+            "fields": [
+                {
+                    "name": "username",
+                    "type": "name"
+                },
+                {
+                    "name": "socket_id",
+                    "type": "string"
+                },
+                {
+                    "name": "avatar_id",
+                    "type": "uint8"
+                }
+            ]
+        },
+        {
+            "name": "deck_card_t",
+            "base": "",
+            "fields": [
+                {
+                    "name": "id",
+                    "type": "uint8"
+                },
+                {
+                    "name": "amount",
+                    "type": "uint8"
+                }
+            ]
+        },
+        {
+            "name": "deck_t",
+            "base": "",
+            "fields": [
+                {
+                    "name": "id",
+                    "type": "uint8"
+                },
+                {
+                    "name": "name",
+                    "type": "name"
+                },
+                {
+                    "name": "klass",
+                    "type": "uint8"
+                },
+                {
+                    "name": "cards",
+                    "type": "deck_cards_t"
+                }
+            ]
+        },
+        {
+            "name": "declfriend",
+            "base": "",
+            "fields": [
+                {
+                    "name": "username",
+                    "type": "name"
+                },
+                {
+                    "name": "public_key",
+                    "type": "public_key"
+                },
+                {
+                    "name": "signature",
+                    "type": "signature"
+                }
+            ]
+        },
+        {
+            "name": "host_t",
+            "base": "",
+            "fields": [
+                {
+                    "name": "username",
+                    "type": "name"
+                },
+                {
+                    "name": "socket_id",
+                    "type": "string"
+                },
+                {
+                    "name": "avatar_id",
+                    "type": "uint8"
+                }
+            ]
+        },
+        {
+            "name": "lobby",
+            "base": "",
+            "fields": [
+                {
+                    "name": "lobby_id",
+                    "type": "uint64"
+                },
+                {
+                    "name": "host",
+                    "type": "host_t"
+                },
+                {
+                    "name": "challengee",
+                    "type": "challengee_t"
+                }
+            ]
+        },
+        {
+            "name": "makelobby",
+            "base": "",
+            "fields": [
+                {
+                    "name": "lobby_id",
+                    "type": "uint64"
+                },
+                {
+                    "name": "public_key",
+                    "type": "public_key"
+                },
+                {
+                    "name": "signature",
+                    "type": "signature"
+                }
+            ]
+        },
+        {
+            "name": "player",
+            "base": "",
+            "fields": [
+                {
+                    "name": "username",
+                    "type": "name"
+                },
+                {
+                    "name": "public_key",
+                    "type": "public_key"
+                },
+                {
+                    "name": "private_key_hash",
+                    "type": "string"
+                },
+                {
+                    "name": "account",
+                    "type": "account_t"
+                },
+                {
+                    "name": "decks",
+                    "type": "decks_t"
+                },
+                {
+                    "name": "social",
+                    "type": "social_t"
+                }
+            ]
+        },
+        {
+            "name": "rmplayer",
+            "base": "",
+            "fields": [
+                {
+                    "name": "username",
+                    "type": "name"
+                }
+            ]
+        },
+        {
+            "name": "savedeck",
+            "base": "",
+            "fields": [
+                {
+                    "name": "cards",
+                    "type": "deck_cards_t"
+                },
+                {
+                    "name": "public_key",
+                    "type": "public_key"
+                },
+                {
+                    "name": "signature",
+                    "type": "signature"
+                }
+            ]
+        },
+        {
+            "name": "selectdeck",
+            "base": "",
+            "fields": [
+                {
+                    "name": "deck_id",
+                    "type": "uint8"
+                },
+                {
+                    "name": "public_key",
+                    "type": "public_key"
+                },
+                {
+                    "name": "signature",
+                    "type": "signature"
+                }
+            ]
+        },
+        {
+            "name": "setavatar",
+            "base": "",
+            "fields": [
+                {
+                    "name": "avatar_id",
+                    "type": "uint8"
+                },
+                {
+                    "name": "public_key",
+                    "type": "public_key"
+                },
+                {
+                    "name": "signature",
+                    "type": "signature"
+                }
+            ]
+        },
+        {
+            "name": "setdeckklass",
+            "base": "",
+            "fields": [
+                {
+                    "name": "id",
+                    "type": "uint8"
+                },
+                {
+                    "name": "klass",
+                    "type": "uint8"
+                },
+                {
+                    "name": "public_key",
+                    "type": "public_key"
+                },
+                {
+                    "name": "signature",
+                    "type": "signature"
+                }
+            ]
+        },
+        {
+            "name": "setdeckname",
+            "base": "",
+            "fields": [
+                {
+                    "name": "id",
+                    "type": "uint8"
+                },
+                {
+                    "name": "name",
+                    "type": "name"
+                },
+                {
+                    "name": "public_key",
+                    "type": "public_key"
+                },
+                {
+                    "name": "signature",
+                    "type": "signature"
+                }
+            ]
+        },
+        {
+            "name": "signin",
+            "base": "",
+            "fields": [
+                {
+                    "name": "socket_id",
+                    "type": "string"
+                },
+                {
+                    "name": "username",
+                    "type": "name"
+                },
+                {
+                    "name": "public_key",
+                    "type": "public_key"
+                },
+                {
+                    "name": "signature",
+                    "type": "signature"
+                }
+            ]
+        },
+        {
+            "name": "signout",
+            "base": "",
+            "fields": [
+                {
+                    "name": "username",
+                    "type": "name"
+                },
+                {
+                    "name": "public_key",
+                    "type": "public_key"
+                },
+                {
+                    "name": "signature",
+                    "type": "signature"
+                }
+            ]
+        },
+        {
+            "name": "signup",
+            "base": "",
+            "fields": [
+                {
+                    "name": "username",
+                    "type": "name"
+                },
+                {
+                    "name": "public_key",
+                    "type": "public_key"
+                },
+                {
+                    "name": "private_key_hash",
+                    "type": "string"
+                }
+            ]
+        },
+        {
+            "name": "social_t",
+            "base": "",
+            "fields": [
+                {
+                    "name": "friends",
+                    "type": "name[]"
+                },
+                {
+                    "name": "requests",
+                    "type": "name[]"
+                },
+                {
+                    "name": "blocked",
+                    "type": "name[]"
+                }
+            ]
+        },
+        {
+            "name": "unblckfriend",
+            "base": "",
+            "fields": [
+                {
+                    "name": "friendname",
+                    "type": "name"
+                },
+                {
+                    "name": "public_key",
+                    "type": "public_key"
+                },
+                {
+                    "name": "signature",
+                    "type": "signature"
+                }
+            ]
+        },
+        {
+            "name": "unfriend",
+            "base": "",
+            "fields": [
+                {
+                    "name": "friendname",
+                    "type": "name"
+                },
+                {
+                    "name": "public_key",
+                    "type": "public_key"
+                },
+                {
+                    "name": "signature",
+                    "type": "signature"
+                }
+            ]
+        }
+    ],
+    "actions": [
+        {
+            "name": "acceptfriend",
+            "type": "acceptfriend",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "addfriend",
+            "type": "addfriend",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "blockfriend",
+            "type": "blockfriend",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "declfriend",
+            "type": "declfriend",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "makelobby",
+            "type": "makelobby",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "rmplayer",
+            "type": "rmplayer",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "savedeck",
+            "type": "savedeck",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "selectdeck",
+            "type": "selectdeck",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "setavatar",
+            "type": "setavatar",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "setdeckklass",
+            "type": "setdeckklass",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "setdeckname",
+            "type": "setdeckname",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "signin",
+            "type": "signin",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "signout",
+            "type": "signout",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "signup",
+            "type": "signup",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "unblckfriend",
+            "type": "unblckfriend",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "unfriend",
+            "type": "unfriend",
+            "ricardian_contract": ""
+        }
+    ],
+    "tables": [
+        {
+            "name": "lobbies",
+            "type": "lobby",
+            "index_type": "i64",
+            "key_names": [],
+            "key_types": []
+        },
+        {
+            "name": "players",
+            "type": "player",
+            "index_type": "i64",
+            "key_names": [],
+            "key_types": []
+        }
+    ],
+    "ricardian_clauses": [],
+    "variants": []
+}

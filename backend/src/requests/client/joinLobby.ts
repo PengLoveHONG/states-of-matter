@@ -27,6 +27,8 @@ const joinLobby = async (app: App, params: any): Promise<void> => {
       );
       const lobby = updated.value;
 
+      if (!lobby) return;
+
       const updatedP = await mongo.db.collection("players").findOneAndUpdate(
         {username},
         {

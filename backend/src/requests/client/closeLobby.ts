@@ -14,6 +14,8 @@ const closeLobby = async (app: App, params: Params): Promise<void> => {
 
     const lobby = deleted.value;
 
+    if (!lobby) return;
+
     socket.emit("closeLobbySenderRes");
     io.to(lobby.challengee.socketId).emit("closeLobbyReceiverRes");
   } catch (error) {

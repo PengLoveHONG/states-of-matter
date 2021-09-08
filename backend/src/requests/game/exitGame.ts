@@ -14,6 +14,8 @@ const exitGame = async (app: App, params: Params): Promise<void> => {
       gameId: parseInt(gameId)
     });
 
+    if (!lobby) return;
+
     await mongo.db.collection("players").updateOne({
       username: lobby.host.username
     }, {

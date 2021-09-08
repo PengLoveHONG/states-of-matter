@@ -13,7 +13,7 @@ import {Eos, Mongo} from "./services";
 import type {App} from "./models/App";
 
 const init = async (): Promise<void> => {
-  const {uri, options} = settings.mongo;
+  const {uri} = settings.mongo;
   const {endpoint, contractKey} = settings.eos;
   const {opts} = settings.socket;
 
@@ -21,7 +21,7 @@ const init = async (): Promise<void> => {
   const server = createServer(app);
   const io = new Server(server, opts);
 
-  const client = await MongoClient.connect(uri, options);
+  const client = await MongoClient.connect(uri);
   const mongoDb = client.db("som");
 
   const rpc = new JsonRpc(endpoint, {fetch});

@@ -1,4 +1,5 @@
 import type {App} from "../../models/App";
+import type { Chat } from "../../models/Chat";
 import type {Player} from "../../models/Player";
 
 interface Params {
@@ -30,6 +31,8 @@ const signin = async (app: App, params: Params): Promise<void> => {
           const chat = await mongo.db.collection("chats").findOne({
             players: {$all: [username, friendname]}
           });
+          
+          if (!chat) { return; }
 
           const {status, socket_id, avatar_id} = friend.account;
           const {messages} = chat;

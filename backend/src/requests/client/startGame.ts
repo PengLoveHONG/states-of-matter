@@ -11,6 +11,7 @@ const startGame = async (app: App, params: Params): Promise<void> => {
     const {lobbyId} = params;
 
     const lobby = await mongo.db.collection("lobbies").findOne({lobbyId});
+    if (!lobby) return;
 
     await mongo.db.collection("players").updateOne({
       username: lobby.host.username
@@ -35,7 +36,6 @@ const startGame = async (app: App, params: Params): Promise<void> => {
     const hostTable = await eos.findPlayer(lobby.host.username);
     const challengeeTable = await eos.findPlayer(lobby.challengee.username);
 
-    // Forgive me lord :D
     const hostDeckId = hostTable.rows[0].account.deck_id;
     const hostDeck = hostTable.rows[0].decks.find(
       ({id}: any) => hostDeckId === id
@@ -55,8 +55,6 @@ const startGame = async (app: App, params: Params): Promise<void> => {
     });
     const hostGameHand: any[] = [];
 
-
-    // Amen
     console.log(hostGameDeck);
 
     const inserted = await mongo.db.collection("games").insertOne({

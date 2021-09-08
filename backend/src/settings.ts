@@ -2,11 +2,7 @@ const production = false;
 
 const settings = {
   mongo: {
-    uri: "mongodb://localhost:27017",
-    options: {
-      useNewUrlParser: true,
-      useUnifiedTopology: true
-    }
+    uri: "mongodb://localhost:27017"
   },
   eos: {
     endpoint: "https://testnet.telos.net",

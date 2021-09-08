@@ -14,11 +14,7 @@ const signup = async (app: App, params: Params): Promise<void> => {
     await eos.pushAction("signup", params);
     socket.emit("notificationRes", {msg: "Account created successfully."});
   } catch (error) {
-    console.log("========== signup() ==========");
-    console.log("");
-    console.table(JSON.stringify(error));
-    console.log("");
-    console.log("========== signup() ==========");
+    console.error(error);
   }
 };
 

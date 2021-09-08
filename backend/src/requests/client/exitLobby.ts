@@ -22,6 +22,8 @@ const exitLobby = async (app: App, params: Params): Promise<void> => {
     );
     const lobby = updatedLobby.value;
 
+    if (!lobby) return;
+
     await mongo.db.collection("players").updateOne(
       {username},
       {

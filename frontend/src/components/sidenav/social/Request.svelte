@@ -1,19 +1,15 @@
 <script lang="ts">
   import {FontAwesome} from "components";
-  import {generateSignature} from "services/ecc";
-  import {socket} from "services/socket";
-  import {playerStore} from "stores";
+  import {eccService, socketService} from "services";
+  import {playerStore} from "stores/data";
 
   let username: string;
 
   const onAcceptFriend = (): void => {
     const {public_key, private_key} = $playerStore;
-    const signature = generateSignature(
-      `acceptfriend:${username}`,
-      private_key
-    );
+    const signature = eccService.sign(`acceptfriend:${username}`, private_key);
 
-    socket.emit("acceptFriendReq", {
+    socketService.emit("acceptFriendReq", {
       friendname: username,
       friendSocketId: "",
       username: $playerStore.username,
@@ -24,9 +20,9 @@
 
   const onDeclineFriend = (): void => {
     const {public_key, private_key} = $playerStore;
-    const signature = generateSignature(`declfriend:${username}`, private_key);
+    const signature = eccService.sign(`declfriend:${username}`, private_key);
 
-    socket.emit("declineFriendReq", {username, public_key, signature});
+    socketService.emit("declineFriendReq", {username, public_key, signature});
   };
 
   export {username};

@@ -1,8 +1,7 @@
 <script lang="ts">
-  import {generateSignature} from "services/ecc";
-  import {socket} from "services/socket";
-  import {playerStore} from "stores";
-  import social from "stores/social";
+  import {eccService, socketService} from "services";
+  import {playerStore} from "stores/data";
+  import {socialStore} from "stores/view";
 
   const avatars = [0, 1, 2];
 
@@ -10,14 +9,14 @@
     const {username, public_key, private_key} = $playerStore;
     const {avatar_id} = $playerStore.account;
     const friendIds: Array<string> = [];
-    const signature = generateSignature(`setavatar:${avatar}`, private_key);
+    const signature = eccService.sign(`setavatar:${avatar}`, private_key);
 
-    $social.friends.forEach(({socketId}) => {
-      if (socketId) friendIds.push(socketId);
+    $socialStore.friends.forEach(({socketId}) => {
+      if (socketId) { friendIds.push(socketId); }
     });
 
     if (avatar_id !== avatar) {
-      socket.emit("setAvatarReq", {
+      socketService.emit("setAvatarReq", {
         avatar_id: avatar,
         friendIds,
         username,

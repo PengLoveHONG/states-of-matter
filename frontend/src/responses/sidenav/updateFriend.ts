@@ -1,4 +1,4 @@
-import social from "stores/social";
+import {socialStore} from "stores/view";
 
 interface UpdateFriend {
   username: string;
@@ -9,7 +9,7 @@ interface UpdateFriend {
 const updateFriend = (params: UpdateFriend): void => {
   const {username, socketId, status} = params;
 
-  social.update((store) => {
+  socialStore.update((store) => {
     const {friends} = store;
     const friend = friends.find((friend) => friend.username === username);
 

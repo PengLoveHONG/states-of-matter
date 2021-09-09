@@ -1,5 +1,5 @@
-import {playerStore} from "stores";
-import social from "stores/social";
+import {playerStore} from "stores/data";
+import {socialStore} from "stores/view";
 
 interface AcceptFriendSender {
   username: string;
@@ -21,7 +21,7 @@ const acceptFriendSender = (params: AcceptFriendSender): void => {
     return store;
   });
 
-  social.update((store) => {
+  socialStore.update((store) => {
     store.friends.push({
       username,
       status,

@@ -1,14 +1,14 @@
 <script lang="ts">
   import {FontAwesome} from "components";
-  import {showNotification} from "stores/notifications";
-  import {playerStore} from "stores";
+  import {miscService} from "services";
+  import {playerStore} from "stores/data";
 
   let isPrivateKeyVisible = false;
 
   const onCopyPublicKey = async (): Promise<void> => {
     try {
       await navigator.clipboard.writeText($playerStore.public_key);
-      showNotification("Copied to clipboard.");
+      miscService.showNotification("Copied to clipboard.");
     } catch (error) {
       console.error(error);
     }
@@ -21,9 +21,9 @@
   const onCopyPrivateKey = async (): Promise<void> => {
     try {
       await navigator.clipboard.writeText($playerStore.private_key);
-      showNotification("Copied to clipboard.");
-    } catch (err) {
-      console.error(err);
+      miscService.showNotification("Copied to clipboard.");
+    } catch (error) {
+      console.error(error);
     }
   };
 </script>

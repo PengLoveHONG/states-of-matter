@@ -1,7 +1,7 @@
 <script lang="ts">
   import Deck from "./Deck/Deck.svelte";
   import Decks from "./Decks/Decks.svelte";
-  import deck from "stores/deck";
+  import {deckStore} from "stores/view";
   import Avatars from "./Avatars.svelte";
 
   const navLinks = [
@@ -60,7 +60,7 @@
       <div on:click={() => gotoView(ref, name)}>
         <i class="fas fa-circle fa-fw" bind:this={ref}></i>
         {#if name === "Deck"}
-          {$deck.name}
+          {$deckStore.name}
         {:else}
           {name}
         {/if}

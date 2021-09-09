@@ -1,19 +1,19 @@
 <script lang="ts">
   import {onMount} from "svelte";
-  import social from "stores/social";
-  import {playerStore} from "stores";
-  import {socket} from "services/socket";
-  import {status} from "models/Player";
+  import {socketService} from "services";
+  import {playerStore} from "stores/data";
+  import {socialStore} from "stores/view";
+  import {status} from "models/data/Player";
 
   const logout = (): void => {
-    const socketIds = $social.friends.reduce((acc, friend) => {
+    const socketIds = $socialStore.friends.reduce((acc, friend) => {
       if (friend.socketId) {acc.push(friend.socketId);}
       return acc;
     }, [] as Array<string>);
 
-    socket.emit("signoutReq", {username: $playerStore.username});
+    socketService.emit("signoutReq", {username: $playerStore.username});
 
-    socket.emit("updateFriendReq", {
+    socketService.emit("updateFriendReq", {
       socketIds,
       username: $playerStore.username,
       socketId: "",
@@ -43,7 +43,7 @@
       }
     };
 
-    $social = {
+    $socialStore = {
       friends: [],
       chat: {
         username: "",

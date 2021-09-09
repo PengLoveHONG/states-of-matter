@@ -11,10 +11,8 @@
       "models/data": ["models/data"],
       "responses": ["responses"],
       "services": ["services"],
-      "services/*": ["services/*"],
-      "stores": ["stores"],
-      "stores/*": ["stores/*"],
-      "stores/data": ["stores/data"]
+      "stores/data": ["stores/data"],
+      "stores/view": ["stores/view"]
     }
   }
 }

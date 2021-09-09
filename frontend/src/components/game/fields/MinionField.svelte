@@ -1,9 +1,9 @@
 <script lang="ts">
-  import {socket} from "services/socket";
-  import {gameStore} from "stores";
+  import {socketService} from "services";
+  import {gameStore} from "stores/data";
 
   const onPlayCard = (): void => {
-    socket.emit("playCardReq", {
+    socketService.emit("playCardReq", {
       gameId: $gameStore.gameId,
       id: 0,
       gid: 0,

@@ -1,63 +1,81 @@
 <script lang="ts">
   import {beforeUpdate, afterUpdate, onMount} from "svelte";
   import {FontAwesome} from "components";
-  import {socket} from "services/socket";
-  import {openModal} from "stores/modal";
+  import {miscService, socketService} from "services";
   import {playerStore} from "stores/data";
-  import chat, {generateChat} from "stores/chatMessages";
-  import social from "stores/social";
+  import {chatStore, socialStore} from "stores/view";
 
   let text = "";
   let chatMessagesRef: HTMLElement;
 
   const onTip = (): void => {
-    const {username, socketId} = $social.chat;
-    openModal("tip", {username, socketId});
+    const {username, socketId} = $socialStore.chat;
+    miscService.openModal("tip", {username, socketId});
   };
 
   const onGift = (): void => {
-    const {username, socketId} = $social.chat;
-    openModal("gift", {username, socketId});
+    const {username, socketId} = $socialStore.chat;
+    miscService.openModal("gift", {username, socketId});
   };
 
   const onUnfriend = (): void => {
-    const {username, socketId} = $social.chat;
-    openModal("unfriend", {username, socketId});
+    const {username, socketId} = $socialStore.chat;
+    miscService.openModal("unfriend", {username, socketId});
   };
 
   const onBlock = (): void => {
-    const {username, socketId} = $social.chat;
-    openModal("block", {username, socketId});
+    const {username, socketId} = $socialStore.chat;
+    miscService.openModal("block", {username, socketId});
   };
 
-  const onChatClose = (): void => { $social.chat.isOpen = false; };
+  const onChatClose = (): void => { $socialStore.chat.isOpen = false; };
 
   const onSendMessage = (): void => {
     if (text) {
       const sender = {username: $playerStore.username};
       const receiver = {
-        username: $social.chat.username,
-        socketId: $social.chat.socketId
+        username: $socialStore.chat.username,
+        socketId: $socialStore.chat.socketId
       };
       const date = new Date();
 
-      socket.emit("sendChatMsgReq", {sender, receiver, text, date});
+      socketService.emit("sendChatMsgReq", {sender, receiver, text, date});
       text = "";
     }
   };
 
   onMount(() => {
-    if ($social.chat.isOpen) {
+    if ($socialStore.chat.isOpen) {
       chatMessagesRef.scrollTo(0, chatMessagesRef.scrollHeight);
     }
   });
 
   beforeUpdate(() => {
-    generateChat();
+    const newChat: Array<any> = [];
+
+    $socialStore.chat.messages.forEach((message) => {
+      const date = new Date(message.date);
+      const timeString = date.toLocaleTimeString(["en-US"], {
+        hour: "2-digit",
+        minute: "2-digit"
+      });
+      const newChatLast = newChat[newChat.length - 1];
+
+      if (newChat.length && newChatLast.username === message.username) {
+        newChatLast.messages.push({text: message.text, date: timeString});
+      } else {
+        newChat.push({
+          username: message.username,
+          messages: [{text: message.text, date: timeString}]
+        });
+      }
+    });
+
+    chatStore.set(newChat);
   });
 
   afterUpdate(() => {
-    if ($social.chat.isOpen) {
+    if ($socialStore.chat.isOpen) {
       chatMessagesRef.scrollTo(0, chatMessagesRef.scrollHeight);
     }
   });
@@ -147,7 +165,7 @@
   }
 </style>
 
-{#if $social.chat.isOpen}
+{#if $socialStore.chat.isOpen}
   <div class="chat">
     <header class="chat__header">
       <div>
@@ -170,7 +188,7 @@
     </header>
 
     <main class="chat__msgs" bind:this={chatMessagesRef}>
-      {#each $chat as message}
+      {#each $chatStore as message}
         <div class="chat__sender">
 
           <img
@@ -178,7 +196,7 @@
             src="assets/avatars/{
               message.username === $playerStore.username ?
               $playerStore.account.avatar_id :
-              $social.chat.avatarId
+              $socialStore.chat.avatarId
             }.jpg"
             alt="Player avatar">
 
@@ -187,7 +205,7 @@
               {
                 message.username === $playerStore.username ?
                 $playerStore.username :
-                $social.chat.username
+                $socialStore.chat.username
               }
             </h4>
             {#each message.messages as msg}

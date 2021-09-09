@@ -1,8 +1,7 @@
 import {get} from "svelte/store";
 import {status} from "models/data/Player";
-import {socketService} from "services";
-import {gameStore, playerStore} from "stores";
-import {getSocketIds} from "stores/social";
+import {miscService, socketService} from "services";
+import {gameStore, playerStore} from "stores/data";
 
 const startGameReceiver = (): void => {
   playerStore.update((store) => {
@@ -16,7 +15,7 @@ const startGameReceiver = (): void => {
   });
 
   socketService.emit("updateFriendReq", {
-    socketIds: getSocketIds(),
+    socketIds: miscService.getSocketIds(),
     username: get(playerStore).username,
     status: status.INGAME
   });

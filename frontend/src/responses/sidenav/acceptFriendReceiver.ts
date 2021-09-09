@@ -1,14 +1,14 @@
-import {playerStore} from "stores";
-import social from "stores/social";
+import {playerStore} from "stores/data";
+import {socialStore} from "stores/view";
 
-interface AcceptFriendReceiver {
+interface Params {
   username: string;
   socketId: string;
   avatarId: number;
   status: number;
 }
 
-const acceptFriendReceiver = (params: AcceptFriendReceiver): void => {
+const acceptFriendReceiver = (params: Params): void => {
   const {username, socketId, avatarId, status} = params;
 
   playerStore.update((store) => {
@@ -16,7 +16,7 @@ const acceptFriendReceiver = (params: AcceptFriendReceiver): void => {
     return store;
   });
 
-  social.update((store) => {
+  socialStore.update((store) => {
     store.friends.push({
       username,
       status,

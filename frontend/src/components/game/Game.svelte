@@ -4,11 +4,11 @@
   import Deck from "./Deck.svelte";
   import Graveyard from "./Graveyard.svelte";
   import Hero from "./Hero.svelte";
-  import {gameStore, lobbyStore, playerStore} from "stores";
-  import {socket} from "services/socket";
+  import {socketService} from "services";
+  import {gameStore, lobbyStore, playerStore} from "stores/data";
 
   const exit = (): void => {
-    socket.emit("exitGameReq", {gameId: $lobbyStore.lobby_id});
+    socketService.emit("exitGameReq", {gameId: $lobbyStore.lobby_id});
   };
 </script>
 

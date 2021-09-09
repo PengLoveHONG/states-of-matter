@@ -1,27 +1,30 @@
 <script lang="ts">
   import {Modal} from "components";
-  import {generateBound} from "services/ecc";
-  import {socket} from "services/socket";
-  import {playerStore} from "stores";
+  import {eccService, socketService} from "services";
+  import {playerStore} from "stores/data";
 
-  let lobbyId: number;
+  let lobby_id: number;
 
   const join = () => {
-    const bound = generateBound($playerStore.public_key);
+    // const {public_key, private_key} = $playerStore;
+    // const signature = eccService.sign(`joinlobby:${lobby_id}`, private_key);
 
-    socket.emit("joinLobbyReq", {
-      lobbyId,
-      username: $playerStore.username,
-      bound,
-      socketId: $playerStore.account.socket_id,
-      avatarId: $playerStore.account.avatar_id
-    });
+    // socketService.emit("joinLobbyReq", {lobby_id, public_key, signature});
+    // const bound = generateBound($playerStore.public_key);
+
+    // socket.emit("joinLobbyReq", {
+    //   lobbyId,
+    //   username: $playerStore.username,
+    //   bound,
+    //   socketId: $playerStore.account.socket_id,
+    //   avatarId: $playerStore.account.avatar_id
+    // });
   };
 </script>
 
 <Modal>
   <form>
-    <input placeholder="Lobby ID" type="number" bind:value={lobbyId}>
+    <input placeholder="Lobby ID" type="number" bind:value={lobby_id}>
     <button class="btn--raised-blue" on:click={join}>JOIN</button>
   </form>
 </Modal>

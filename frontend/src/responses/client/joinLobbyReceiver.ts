@@ -1,4 +1,4 @@
-import {lobbyStore} from "stores";
+import {lobbyStore} from "stores/data";
 
 interface Params { challengee: any; }
 

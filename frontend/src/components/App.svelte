@@ -1,17 +1,17 @@
 <script lang="ts">
   import {onMount} from "svelte";
   import ChatWindow from "./ChatWindow.svelte";
-  import Modals from "./Modals.svelte";
+  import Modals from "./modals/Modals.svelte";
   import Notifications from "./Notifications.svelte";
   import Auth from "./auth/Auth.svelte";
   import Client from "./client/Client.svelte";
   import Sidenav from "./sidenav/Sidenav.svelte";
   import Game from "./game/Game.svelte";
   import responses from "responses";
-  import {listenToResponses} from "services/socket";
-  import {playerStore} from "stores";
+  import {socketService} from "services";
+  import {playerStore} from "stores/data";
 
-  onMount(() => { listenToResponses(responses); });
+  onMount(() => { socketService.listenToResponses(responses); });
 </script>
 
 <style>

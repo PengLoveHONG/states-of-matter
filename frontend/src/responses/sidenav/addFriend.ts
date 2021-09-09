@@ -1,10 +1,8 @@
-import {playerStore} from "stores";
+import {playerStore} from "stores/data";
 
-interface AddFriend {
-  sender: string;
-}
+interface Params { sender: string; }
 
-const addFriend = (params: AddFriend): void => {
+const addFriend = (params: Params): void => {
   const {sender} = params;
 
   playerStore.update((player) => {

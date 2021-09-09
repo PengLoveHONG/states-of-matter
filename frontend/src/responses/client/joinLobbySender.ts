@@ -1,8 +1,7 @@
-import {status} from "models/data/Player";
-import {socketService} from "services";
-import {lobbyStore, playerStore} from "stores";
-import {getSocketIds} from "stores/social";
 import {get} from "svelte/store";
+import {status} from "models/data/Player";
+import {miscService, socketService} from "services";
+import {lobbyStore, playerStore} from "stores/data";
 
 interface Params { lobby: any; }
 
@@ -17,7 +16,7 @@ const joinLobbySender = (params: Params): void => {
   });
 
   socketService.emit("updateFriendReq", {
-    socketIds: getSocketIds(),
+    socketIds: miscService.getSocketIds(),
     username: player.username,
     status: status.INLOBBY
   });

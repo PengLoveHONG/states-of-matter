@@ -1,9 +1,7 @@
-<script>
-  import {closeModal} from "stores/modal";
+<script lang="ts">
+  import {miscService} from "services";
 
-  const exit = () => {
-    closeModal();
-  };
+  const exit = (): void => { miscService.closeModal(); };
 </script>
 
 <style>

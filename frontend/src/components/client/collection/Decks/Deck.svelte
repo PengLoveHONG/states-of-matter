@@ -1,27 +1,25 @@
 <script lang="ts">
   import heroes from "data/heroes";
-  import {socket} from "services/socket";
-  import {generateSignature} from "services/ecc";
-  import {openModal} from "stores/modal";
-  import {playerStore} from "stores";
+  import {eccService, miscService, socketService} from "services";
+  import {playerStore} from "stores/data";
 
   let deck;
   const hero = heroes.get(deck.klass);
 
   const selectDeck = (id: number): void => {
-    const {username, public_key, private_key} = $playerStore;
+    const {public_key, private_key} = $playerStore;
     const deck_id = id;
-    const signature = generateSignature(`selectdeck:${deck_id}`, private_key);
+    const signature = eccService.sign(`selectdeck:${deck_id}`, private_key);
 
-    socket.emit("selectDeckReq", {deck_id, public_key, signature});
+    socketService.emit("selectDeckReq", {deck_id, public_key, signature});
   };
 
   const changeDeckName = (id: number): void => {
-    openModal("changeDeckName", {id});
+    miscService.openModal("changeDeckName", {id});
   };
 
   const changeDeckClass = (id: number): void => {
-    openModal("setDeckKlass", {id});
+    miscService.openModal("setDeckKlass", {id});
   };
 
   export {deck};

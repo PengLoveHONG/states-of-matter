@@ -1,6 +1,6 @@
-import {closeModal} from "stores/modal";
-import {playerStore} from "stores";
-import social from "stores/social";
+import {miscService} from "services";
+import {playerStore} from "stores/data";
+import {socialStore} from "stores/view";
 
 interface UnfriendSender {
   friendname: string;
@@ -18,7 +18,7 @@ const unfriendSender = (params: UnfriendSender): void => {
     return store;
   });
 
-  social.update((store) => {
+  socialStore.update((store) => {
     const {chat, friends} = store;
     const friend = friends.find((friend) => friend.username === friendname);
     const i = friends.indexOf(friend);
@@ -30,7 +30,7 @@ const unfriendSender = (params: UnfriendSender): void => {
     return store;
   });
 
-  closeModal();
+  miscService.closeModal();
 };
 
 export default unfriendSender;

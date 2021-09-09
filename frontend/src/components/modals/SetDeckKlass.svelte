@@ -1,16 +1,15 @@
 <script lang="ts">
   import {FontAwesome, Modal} from "components";
-  import {generateSignature} from "services/ecc";
-  import {socket} from "services/socket";
-  import modal from "stores/modal";
-  import {playerStore} from "stores";
+  import {eccService, socketService} from "services";
+  import {playerStore} from "stores/data";
+  import {modalStore} from "stores/view";
 
   const onSetDeckKlass = (klass: number): void => {
-    const {id} = $modal.data;
+    const {id} = $modalStore.data;
     const {public_key, private_key} = $playerStore;
-    const signature = generateSignature(`setdeckklass:${klass}`, private_key);
+    const signature = eccService.sign(`setdeckklass:${klass}`, private_key);
 
-    socket.emit("setDeckKlassReq", {id, klass, public_key, signature});
+    socketService.emit("setDeckKlassReq", {id, klass, public_key, signature});
   };
 </script>
 

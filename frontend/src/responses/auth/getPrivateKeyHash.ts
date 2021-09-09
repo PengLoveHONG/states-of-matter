@@ -1,7 +1,6 @@
 import {get} from "svelte/store";
-import {cryptoService, eccService, socketService} from "services";
-import {showNotification} from "stores/view/notifications";
-import {authStore, playerStore} from "stores";
+import {cryptoService, eccService, miscService, socketService} from "services";
+import {authStore, playerStore} from "stores/data";
 
 interface Params { private_key_hash: string; }
 
@@ -21,7 +20,7 @@ const getPrivateKeyHash = (params: Params): void => {
 
     socketService.emit("signinReq", {username, public_key, signature});
   } else {
-    showNotification("Wrong password.");
+    miscService.showNotification("Wrong password.");
   }
 };
 

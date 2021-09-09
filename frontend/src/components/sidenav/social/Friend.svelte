@@ -1,16 +1,12 @@
 <script lang="ts">
-  import {quadInOut} from "svelte/easing";
-  import {slide} from "svelte/transition";
-  import type {SlideParams} from "svelte/transition";
   import {FontAwesome} from "components";
   import {status} from "models/data/Player";
+  import {socialStore} from "stores/view";
+
   import type {Friend} from "models/view/Social";
-  import {openModal} from "stores/modal";
-  import social from "stores/social";
 
   let friend: Friend;
   let isActionsVisible = false;
-  const transitionSlide: SlideParams = {duration: 333, easing: quadInOut};
 
   const onToggleActions = (): void => {
     isActionsVisible = !isActionsVisible;
@@ -21,11 +17,11 @@
 
     isActionsVisible = !isActionsVisible;
 
-    if ($social.chat.username === username) {
-      $social.chat.isOpen = true;
+    if ($socialStore.chat.username === username) {
+      $socialStore.chat.isOpen = true;
     } else {
       const isOpen = true;
-      $social.chat = {username, status, socketId, avatarId, isOpen, messages};
+      $socialStore.chat = {username, status, socketId, avatarId, isOpen, messages};
     }
   };
 
@@ -67,13 +63,6 @@
   .friend__main__info__username {
     margin-bottom: var(--spacing-xsm);
   }
-
-  .friend__actions {
-    width: 100%;
-    margin-top: var(--spacing-sm);
-    display: flex;
-    justify-content: center;
-  }
 </style>
 
 <div class="friend">
@@ -109,16 +98,4 @@
     </button>
 
   </div>
-
-  <!-- {#if isActionsVisible}
-    <div class="friend__actions" transition:slide={transitionSlide}>
-
-      <button class="btn--icon" on:click={onChat}>
-        <FontAwesome icon="comment"/>
-      </button>
-
-      
-
-    </div>
-  {/if} -->
 </div>

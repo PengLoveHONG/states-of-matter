@@ -1,25 +1,39 @@
 <script lang="ts">
   import DeckCard from "./DeckCard.svelte";
-  import {generateSignature} from "services/ecc";
-  import {socket} from "services/socket";
-  import deck, {removeCard} from "stores/deck";
-  import {playerStore} from "stores";
+  import {eccService, socketService} from "services";
+  import {playerStore} from "stores/data";
+  import {deckStore} from "stores/view";
 
   const saveDeck = (): void => {
-    const {username, public_key, private_key} = $playerStore;
-    const cards = $deck.cards.map(({id, amount}) => ({id, amount}));
-    const signature = generateSignature(`savedeck:${cards.length}`, private_key);
+    const {public_key, private_key} = $playerStore;
+    const cards = $deckStore.cards.map(({id, amount}) => ({id, amount}));
+    const signature = eccService.sign(`savedeck:${cards.length}`, private_key);
 
-    socket.emit("saveDeckReq", {cards, public_key, signature});
+    socketService.emit("saveDeckReq", {cards, public_key, signature});
   };
 
   const removeFromDeck = (event): void => {
-    removeCard(event.detail);
+    //removeCard(event.detail);
+
+    deckStore.update((store) => {
+      const deckCard = store.cards.find((deckCard) => deckCard.id === event.detail);
+
+      if (deckCard.amount > 1) {
+        deckCard.amount -= 1;
+      } else {
+        const i = store.cards.indexOf(deckCard);
+        store.cards.splice(i, 1);
+      }
+
+      store.cardsAmount = $deckStore.cards.reduce((acc, {amount}) => acc += amount, 0);;
+
+      return store;
+    });
   };
 
   const clearDeck = (): void => {
-    $deck.cards = [];
-    $deck.cardsAmount = 0;
+    $deckStore.cards = [];
+    $deckStore.cardsAmount = 0;
   };
 </script>
 
@@ -62,7 +76,7 @@
 <div class="deck">
   <div class="deck__toolbar">
     <div>
-      {$deck.cardsAmount} / 30
+      {$deckStore.cardsAmount} / 30
     </div>
     <div>
       <button class="btn--icon" title="Clear deck" on:click={clearDeck}>
@@ -74,7 +88,7 @@
     </div>
   </div>
   <div class="deck__cards">
-    {#each $deck.cards as card}
+    {#each $deckStore.cards as card}
       <DeckCard {card} on:removeFromDeck={removeFromDeck}/>
     {/each}
   </div>

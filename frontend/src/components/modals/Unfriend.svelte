@@ -1,17 +1,16 @@
 <script lang="ts">
   import {Modal} from "components";
-  import {generateSignature} from "services/ecc";
-  import {socket} from "services/socket";
-  import modal from "stores/modal";
-  import {playerStore} from "stores";
+  import {eccService, socketService} from "services";
+  import {playerStore} from "stores/data";
+  import {modalStore} from "stores/view";
 
-  const unfriend = (): void => {
-    const friendname = $modal.data.username;
-    const friendSocketId = $modal.data.socketId;
+  const onUnfriend = (): void => {
+    const friendname = $modalStore.data.username;
+    const friendSocketId = $modalStore.data.socketId;
     const {username, public_key, private_key} = $playerStore;
-    const signature = generateSignature(`unfriend:${friendname}`, private_key);
+    const signature = eccService.sign(`unfriend:${friendname}`, private_key);
 
-    socket.emit(
+    socketService.emit(
       "unfriendReq",
       {username, friendname, friendSocketId, public_key, signature}
     );
@@ -20,9 +19,9 @@
 
 <Modal>
   <p>
-    Are you sure you want to remove {$modal.data.username} from your
+    Are you sure you want to remove {$modalStore.data.username} from your
     friends list?
   </p>
-  <button class="btn--raised-accent" on:click={unfriend}>YES</button>
+  <button class="btn--raised-accent" on:click={onUnfriend}>YES</button>
   <button class="btn--basic-accent">NO</button>
 </Modal>

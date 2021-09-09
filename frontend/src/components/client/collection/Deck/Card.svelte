@@ -1,11 +1,32 @@
 <script lang="ts">
-  import {addCard} from "stores/deck";
+  import {deckStore} from "stores/view";
 
   let card;
   let klass;
   let isFlipped = false;
 
-  const onAddToDeck = (): void => { addCard(card.id, card.name, klass); };
+  const onAddToDeck = (): void => {
+    //addCard(card.id, card.name, klass);
+    const {id, name} = card;
+
+    if ($deckStore.cardsAmount >= 30) { return; }
+
+    deckStore.update((store) => {
+      const deckCard = store.cards.find((deckCard) => deckCard.id === id);
+
+      if (deckCard) {
+        if (deckCard.amount < 2) { deckCard.amount += 1; }
+      } else {
+        const amount = 1;
+        store.cards.push({klass, id, name, amount});
+      }
+
+      store.cardsAmount = store.cards.reduce((acc, {amount}) => acc += amount, 0);
+
+      return store;
+    });
+  };
+
   const onFlip = (): void => { isFlipped = !isFlipped; };
 
   export {card, klass};

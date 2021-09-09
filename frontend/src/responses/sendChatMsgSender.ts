@@ -1,5 +1,6 @@
+import {socialStore} from "stores/view";
+
 import type {Message} from "models/view/Social";
-import social from "stores/social";
 
 interface Sender { username: string; }
 interface Receiver { username: string; }
@@ -14,7 +15,7 @@ const sendChatMsgSender = (params: SendChatMsgSender): void => {
   const {sender: {username}, receiver, text, date} = params;
   const message: Message = {username, text, date};
 
-  social.update((store) => {
+  socialStore.update((store) => {
     store
       .friends
       .find((friend) => friend.username === receiver.username)

@@ -3,8 +3,10 @@ import {status} from "../../models/Player";
 
 const joinLobby = async (app: App, params: any): Promise<void> => {
   try {
-    const {io, mongo, socket} = app;
+    const {eos, io, mongo, socket} = app;
     const {lobbyId, username, bound, socketId, avatarId} = params;
+
+    await eos.pushAction("joinlobby", {});
 
     const lobby = await mongo.db.collection("lobbies").findOne({lobbyId});
 

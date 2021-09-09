@@ -6,9 +6,9 @@
   import Friend from "./Friend.svelte";
   import Request from "./Request.svelte";
   import {FontAwesome} from "components";
-  import {openModal} from "stores/modal";
-  import {playerStore} from "stores";
-  import social from "stores/social";
+  import {miscService} from "services";
+  import {playerStore} from "stores/data";
+  import {socialStore} from "stores/view";
 
   let isFriendsToggled = true;
   let isRequestsToggled = false;
@@ -24,7 +24,7 @@
   }
   /** Open add friend modal. */
   const addFriendModal = (): void => {
-    openModal("addFriend");
+    miscService.openModal("addFriend");
   };
   /** Toggle friends menu. */
   const toggleFriends = (): void => {
@@ -77,7 +77,7 @@
     {#if isFriendsToggled}
       <div class="list" transition:slide={transitionSlide}>
         {#if $playerStore.social.friends.length}
-          {#each $social.friends as friend}
+          {#each $socialStore.friends as friend}
             <Friend {friend}/>
           {/each}
         {:else}

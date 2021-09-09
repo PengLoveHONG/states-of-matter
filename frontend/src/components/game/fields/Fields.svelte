@@ -1,6 +1,5 @@
 <script>
-import Hero from "../Hero.svelte";
-
+  import Hero from "../Hero.svelte";
   import MagicField from "./MagicField.svelte";
   import MinionField from "./MinionField.svelte";
   import TrapField from "./TrapField.svelte";

@@ -1,6 +1,6 @@
 import {socketService} from "services";
-import {gameStore, lobbyStore, playerStore} from "stores";
-import social from "stores/social";
+import {gameStore, lobbyStore, playerStore} from "stores/data";
+import {socialStore} from "stores/view";
 
 import type {Player} from "models/data";
 import type {Friend} from "models/view/Social";
@@ -27,7 +27,7 @@ const signin = (params: Params): void => {
     return store;
   });
 
-  social.update((store) => {
+  socialStore.update((store) => {
     store.friends = friends;
     return store;
   });

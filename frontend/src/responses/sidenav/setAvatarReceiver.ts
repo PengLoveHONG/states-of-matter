@@ -1,4 +1,4 @@
-import social from "stores/social";
+import {socialStore} from "stores/view";
 
 interface Params {
   username: string;
@@ -8,7 +8,7 @@ interface Params {
 const setAvatarReceiver = (params: Params): void => {
   const {username, avatarId} = params;
 
-  social.update((store) => {
+  socialStore.update((store) => {
     const friend = store.friends.find((friend) => friend.username === username);
     friend.avatarId = avatarId;
     return store;

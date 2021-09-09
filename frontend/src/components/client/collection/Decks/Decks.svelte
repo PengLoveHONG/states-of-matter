@@ -1,11 +1,23 @@
 <script lang="ts">
   import {onMount} from "svelte";
   import Deck from "./Deck.svelte";
-  import decks, {generateDecks} from "stores/decks";
-  import {playerStore} from "stores";
+  import {playerStore} from "stores/data";
+  import {decksStore} from "stores/view";
 
   onMount(() => {
-    generateDecks($playerStore);
+    decksStore.update((store) => {
+      store.decks = $playerStore.decks.map(({id, name, klass, cards}) => {
+        let cardsInDeck = 0;
+
+        if (cards.length) {
+          cardsInDeck = cards.reduce((acc, {amount}) => acc += amount, 0);
+        }
+
+        return {id, name, klass, cardsInDeck};
+      });
+
+      return store;
+    });
   });
 </script>
 
@@ -65,7 +77,7 @@
 </style>
 
 <div class="deck-picker">
-  {#each $decks.decks as deck}
+  {#each $decksStore.decks as deck}
     <Deck {deck}/>
   {/each}
 

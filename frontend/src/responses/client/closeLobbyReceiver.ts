@@ -1,8 +1,7 @@
 import {get} from "svelte/store";
 import {status} from "models/data/Player";
-import {socketService} from "services";
-import {lobbyStore, playerStore} from "stores";
-import { getSocketIds } from "stores/social";
+import {miscService, socketService} from "services";
+import {lobbyStore, playerStore} from "stores/data";
 
 const closeLobbyReceiver = (): void => {
   const player = get(playerStore);
@@ -27,7 +26,7 @@ const closeLobbyReceiver = (): void => {
   });
 
   socketService.emit("updateFriendReq", {
-    socketIds: getSocketIds(),
+    socketIds: miscService.getSocketIds(),
     username: player.username,
     status: player.account.status
   });

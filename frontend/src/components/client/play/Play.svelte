@@ -1,8 +1,8 @@
 <script lang="ts">
   import Lobby from "./Lobby.svelte";
   import SelectMode from "./SelectMode.svelte";
-  import {status} from "models/Player";
-  import {playerStore} from "stores";
+  import {status} from "models/data/Player";
+  import {playerStore} from "stores/data";
 </script>
 
 <style>

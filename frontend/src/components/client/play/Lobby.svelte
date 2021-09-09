@@ -1,19 +1,19 @@
 <script lang="ts">
-  import {socket} from "services/socket";
-  import {lobbyStore, playerStore} from "stores";
+  import {socketService} from "services";
+  import {lobbyStore, playerStore} from "stores/data";
 
   const start = (): void => {
-    socket.emit("startGameReq", {lobbyId: $lobbyStore.lobby_id});
+    socketService.emit("startGameReq", {lobbyId: $lobbyStore.lobby_id});
   };
 
   const close = (): void => {
-    socket.emit("closeLobbyReq", {
+    socketService.emit("closeLobbyReq", {
       lobbyId: $lobbyStore.lobby_id
     });
   };
 
   const exit = (): void => {
-    socket.emit("exitLobbyReq", {
+    socketService.emit("exitLobbyReq", {
       lobbyId: $lobbyStore.lobby_id,
       username: $playerStore.username
     });

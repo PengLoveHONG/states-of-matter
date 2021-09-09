@@ -1,6 +1,7 @@
+import {miscService} from "services";
+import {playerStore} from "stores/data";
+
 import type {DeckCard} from "models/data/Player";
-import {showNotification} from "stores/view/notifications";
-import {playerStore} from "stores";
 
 interface Params {
   cards: Array<DeckCard>;
@@ -16,7 +17,7 @@ const saveDeck = (params: Params): void => {
     return store;
   });
 
-  showNotification("Deck saved successfully.");
+  miscService.showNotification("Deck saved successfully.");
 };
 
 export default saveDeck;

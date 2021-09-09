@@ -1,4 +1,4 @@
-import {lobbyStore} from "stores";
+import {lobbyStore} from "stores/data";
 
 const exitLobbyReceiver = (): void => {
   lobbyStore.update((store) => {

@@ -1,31 +1,26 @@
 <script lang="ts">
   import {Modal} from "components";
-  import {socket} from "services/socket";
-  import {showNotification} from "stores/notifications";
-  import {playerStore} from "stores";
-import { generateSignature } from "services/ecc";
+  import {eccService, miscService, socketService} from "services";
+  import {playerStore} from "stores/data";
 
   const form = {friendname: ""};
 
-  const addFriend = (): void => {
+  const onAddFriend = (): void => {
     const {friendname} = form;
 
     if (!friendname) {
-      showNotification("Username field can't be empty.");
+      miscService.showNotification("Username field can't be empty.");
     } else if ($playerStore.username === friendname) {
-      showNotification("You can't add yourself as a friend.");
+      miscService.showNotification("You can't add yourself as a friend.");
     } else if ($playerStore.social.friends.includes(friendname)) {
-      showNotification("User is already in your friends list.");
+      miscService.showNotification("User is already in your friends list.");
     } else if ($playerStore.social.blocked.includes(friendname)) {
-      showNotification("This user is being blocked.");
+      miscService.showNotification("This user is being blocked.");
     } else {
       const {public_key, private_key} = $playerStore;
-      const signature = generateSignature(
-        `addfriend:${friendname}`,
-        private_key
-      );
+      const signature = eccService.sign(`addfriend:${friendname}`, private_key);
 
-      socket.emit("addFriendReq", {friendname, public_key, signature});
+      socketService.emit("addFriendReq", {friendname, public_key, signature});
     }
   };
 </script>
@@ -40,7 +35,7 @@ import { generateSignature } from "services/ecc";
 <Modal>
   <form>
     <input class="input--green" placeholder="Username" bind:value={form.friendname}>
-    <button class="btn--raised-accent" on:click={addFriend}>
+    <button class="btn--raised-accent" on:click={onAddFriend}>
       <i class="fas fa-paper-plane fa-fw"></i> SEND
     </button>
   </form>

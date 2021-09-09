@@ -1,19 +1,15 @@
 <script type="ts">
   import {FontAwesome} from "components";
-  import {generateSignature} from "services/ecc";
-  import {socket} from "services/socket";
-  import {playerStore} from "stores";
+  import {eccService, socketService} from "services";
+  import {playerStore} from "stores/data";
 
   let friendname: string;
 
   const onUnblock = (): void => {
     const {public_key, private_key} = $playerStore;
-    const signature = generateSignature(
-      `unblckfriend:${friendname}`,
-      private_key
-    );
+    const signature = eccService.sign(`unblckfriend:${friendname}`, private_key);
 
-    socket.emit("unblockReq", {friendname, public_key, signature});
+    socketService.emit("unblockReq", {friendname, public_key, signature});
   };
 
   export {friendname};

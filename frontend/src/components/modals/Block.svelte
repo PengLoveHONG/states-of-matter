@@ -1,20 +1,16 @@
 <script lang="ts">
   import {Modal} from "components";
-  import {generateSignature} from "services/ecc";
-  import {socket} from "services/socket";
-  import modal from "stores/modal";
-  import {playerStore} from "stores";
+  import {eccService, socketService} from "services";
+  import {playerStore} from "stores/data";
+  import {modalStore} from "stores/view";
 
   const block = (): void => {
-    const friendname = $modal.data.username;
-    const friendSocketId = $modal.data.socketId;
+    const friendname = $modalStore.data.username;
+    const friendSocketId = $modalStore.data.socketId;
     const {username, public_key, private_key} = $playerStore;
-    const signature = generateSignature(
-      `blockfriend:${friendname}`,
-      private_key
-    );
+    const signature = eccService.sign(`blockfriend:${friendname}`, private_key);
 
-    socket.emit(
+    socketService.emit(
       "blockReq",
       {username, friendname, friendSocketId, public_key, signature}
     );
@@ -23,7 +19,7 @@
 
 <Modal>
   <p>
-    Are you sure you want to block {$modal.data.username}?<br>
+    Are you sure you want to block {$modalStore.data.username}?<br>
     Doing so will prevent them from sending you requests until you unblock them.
   </p>
   <button class="btn--raised-accent" on:click={block}>YES</button>

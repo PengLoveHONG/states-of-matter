@@ -1,9 +1,7 @@
 import {get} from "svelte/store";
-import {closeModal} from "stores/modal";
-import {showNotification} from "stores/view/notifications";
-import deck from "stores/deck";
-import decks from "stores/decks";
-import {playerStore} from "stores";
+import {miscService} from "services";
+import {playerStore} from "stores/data";
+import {decksStore, deckStore} from "stores/view";
 
 interface Params {
   id: number;
@@ -20,21 +18,21 @@ const changeDeckName = (params: Params): void => {
     return store;
   });
 
-  decks.update((store) => {
+  decksStore.update((store) => {
     const deck = store.decks.find((deck) => deck.id === id);
     deck.name = name;
     return store;
   });
 
   if (id === player.account.deck_id) {
-    deck.update((store) => {
+    deckStore.update((store) => {
       store.name = name;
       return store;
     });
   }
 
-  closeModal();
-  showNotification("Deck name changed successfully.");
+  miscService.closeModal();
+  miscService.showNotification("Deck name changed successfully.");
 };
 
 export default changeDeckName;

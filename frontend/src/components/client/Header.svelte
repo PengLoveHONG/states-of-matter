@@ -1,7 +1,5 @@
 <script lang="ts">
   import {createEventDispatcher, onMount} from "svelte";
-  import {Tooltip} from "components";
-  import {openModal} from "stores/modal";
 
   const dispatch = createEventDispatcher();
 

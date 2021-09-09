@@ -1,19 +1,17 @@
 <script lang="ts">
-  import {generateBound, generateSignature} from "services/ecc";
-  import {socket} from "services/socket";
-  import {openModal} from "stores/modal";
-  import {playerStore} from "stores";
+  import {eccService, miscService, socketService} from "services";
+  import {playerStore} from "stores/data";
 
   const create = (): void => {
     const {public_key, private_key} = $playerStore;
     const lobby_id = Math.floor(Math.random() * 1000000000);
-    const signature = generateSignature(`makelobby:${lobby_id}`, private_key);
+    const signature = eccService.sign(`makelobby:${lobby_id}`, private_key);
 
-    socket.emit("createLobbyReq", {lobby_id, public_key, signature});
+    socketService.emit("createLobbyReq", {lobby_id, public_key, signature});
   };
 
   const join = (): void => {
-    openModal("joinCustom");
+    miscService.openModal("joinCustom");
   };
 </script>
 

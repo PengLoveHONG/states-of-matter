@@ -355,6 +355,147 @@ ACTION som::makelobby(
   });
 }
 
+ACTION som::destroylobby(
+  uint64_t lobby_id,
+  public_key public_key,
+  signature signature
+) {
+  string msg = format_string("destroylobby:%u", lobby_id);
+  checksum256 digest = sha256(msg.c_str(), msg.length());
+  assert_recover_key(digest, signature, public_key);
+
+  auto index = players_table.get_index<by_public_key>();
+  auto player = index.find(public_key_to_fixed_bytes(public_key));
+  auto lobby = lobbies_table.find(lobby_id);
+  auto challengee = players_table.find(lobby->challengee.username.value);
+
+  index.modify(player, _self, [&](auto &row) {
+    row.account.lobby_id = 0;
+    row.account.status = ONLINE;
+  });
+
+  players_table.modify(challengee, _self, [&](auto &row) {
+    row.account.lobby_id = 0;
+    row.account.status = ONLINE;
+  });
+
+  lobbies_table.erase(lobby);
+}
+
+ACTION som::joinlobby(
+  uint64_t lobby_id,
+  public_key public_key,
+  signature signature
+) {
+  string msg = format_string("joinlobby:%u", lobby_id);
+  checksum256 digest = sha256(msg.c_str(), msg.length());
+  assert_recover_key(digest, signature, public_key);
+
+  auto index = players_table.get_index<by_public_key>();
+  auto player = index.find(public_key_to_fixed_bytes(public_key));
+  auto lobby = lobbies_table.find(lobby_id);
+
+  lobbies_table.modify(lobby, _self, [&](auto &row) {
+    row.challengee = {
+      player->username,
+      player->account.socket_id,
+      player->account.avatar_id
+    };
+  });
+
+  index.modify(player, _self, [&](auto &row) {
+    row.account.lobby_id = lobby_id;
+    row.account.status = INLOBBY;
+  });
+}
+
+ACTION som::leavelobby(
+  uint64_t lobby_id,
+  public_key public_key,
+  signature signature
+) {
+  string msg = format_string("leavelobby:%u", lobby_id);
+  checksum256 digest = sha256(msg.c_str(), msg.length());
+  assert_recover_key(digest, signature, public_key);
+
+  auto index = players_table.get_index<by_public_key>();
+  auto player = index.find(public_key_to_fixed_bytes(public_key));
+  auto lobby = lobbies_table.find(lobby_id);
+
+  lobbies_table.modify(lobby, _self, [&](auto &row) {
+    row.challengee = {};
+  });
+
+  index.modify(player, _self, [&](auto &row) {
+    row.account.lobby_id = 0;
+    row.account.status = ONLINE;
+  });
+}
+
+ACTION som::startgame(
+  uint64_t lobby_id,
+  public_key public_key,
+  signature signature
+) {
+  string msg = format_string("startgame:%u", lobby_id);
+  checksum256 digest = sha256(msg.c_str(), msg.length());
+  assert_recover_key(digest, signature, public_key);
+
+  auto index = players_table.get_index<by_public_key>();
+  auto player = index.find(public_key_to_fixed_bytes(public_key));
+  auto lobby = lobbies_table.find(lobby_id);
+  auto challengee = players_table.find(lobby->challengee.username.value);
+
+  index.modify(player, _self, [&](auto &row) {
+    row.account.lobby_id = 0;
+    row.account.game_id = lobby_id;
+    row.account.status = INGAME;
+  });
+
+  players_table.modify(challengee, _self, [&](auto &row) {
+    row.account.lobby_id = 0;
+    row.account.game_id = lobby_id;
+    row.account.status = INGAME;
+  });
+
+  lobbies_table.erase(lobby);
+
+  games_table.emplace(_self, [&](auto &row) {
+    row.game_id = lobby_id;
+    row.player_a = player->username;
+    row.player_b = challengee->username;
+  });
+}
+
+ACTION som::endgame(
+  uint64_t game_id,
+  public_key public_key,
+  signature signature
+) {
+  string msg = format_string("endgame:%u", game_id);
+  checksum256 digest = sha256(msg.c_str(), msg.length());
+  assert_recover_key(digest, signature, public_key);
+
+  auto index = players_table.get_index<by_public_key>();
+  auto player = index.find(public_key_to_fixed_bytes(public_key));
+  auto game = games_table.find(game_id);
+  auto challengee = players_table.find(game->player_b.value);
+
+  index.modify(player, _self, [&](auto &row) {
+    row.account.game_id = 0;
+    row.account.status = ONLINE;
+  });
+
+   players_table.modify(challengee, _self, [&](auto &row) {
+    row.account.game_id = 0;
+    row.account.status = ONLINE;
+  });
+
+  games_table.erase(game);
+}
+
+ACTION som::dummy() {}
+
 ACTION som::rmplayer(name username) {
   auto player = players_table.find(username.value);
   players_table.erase(player);
@@ -381,6 +522,12 @@ EOSIO_DISPATCH(
   (unblckfriend)
   // Lobbies
   (makelobby)
+  (destroylobby)
+  (joinlobby)
+  (leavelobby)
+  (startgame)
+  (endgame)
   // Dev
+  (dummy)
   (rmplayer)
 );

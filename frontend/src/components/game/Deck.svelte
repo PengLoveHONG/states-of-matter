@@ -11,5 +11,5 @@
 </style>
 
 <div class="player__deck">
-  <img class="player__deck__img" src="assets/card-backs/default.jpg">
+  <img class="player__deck__img" src="assets/card-backs/default.jpg" alt="Deck">
 </div>

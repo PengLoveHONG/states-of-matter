@@ -1,4 +1,3 @@
-import {RpcError} from "eosjs";
 import type {App} from "../../models/App";
 
 interface Params {

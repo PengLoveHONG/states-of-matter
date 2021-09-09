@@ -10,7 +10,7 @@ const startGameReceiver = (): void => {
   });
 
   gameStore.update((store) => {
-    store.opponent.username = get(playerStore).username;
+    store.player_b = get(playerStore).username;
     return store;
   });
 

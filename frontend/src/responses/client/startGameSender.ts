@@ -10,7 +10,7 @@ const startGameSender = (): void => {
   });
 
   gameStore.update((game) => {
-    game.player.username = get(playerStore).username;
+    game.player_a = get(playerStore).username;
     return game;
   });
 

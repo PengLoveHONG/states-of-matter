@@ -1,41 +1,22 @@
 import type {App} from "../../models/App";
-import {status} from "../../models/Player";
 
 interface Params {
-  lobbyId: number;
-  username: string;
+  lobby_id: number;
+  public_key: string;
+  signature: string;
 }
 
 const exitLobby = async (app: App, params: Params): Promise<void> => {
+  const {eos, io, socket} = app;
+  const {lobby_id} = params;
+
   try {
-    const {io, mongo, socket} = app;
-    const {lobbyId, username} = params;
+    await eos.pushAction("leavelobby", params);
 
-    const updatedLobby = await mongo.db.collection("lobbies").findOneAndUpdate(
-      {lobbyId},
-      {
-        $set: {
-          challengee: {}
-        }
-      },
-      {returnDocument: "after"}
-    );
-    const lobby = updatedLobby.value;
-
-    if (!lobby) return;
-
-    await mongo.db.collection("players").updateOne(
-      {username},
-      {
-        $set: {
-          "account.status": status.ONLINE,
-          "account.lobbyId": 0
-        }
-      }
-    );
+    const lobby = await eos.findLobby(lobby_id);
 
     socket.emit("exitLobbySenderRes");
-    io.to(lobby.host.socketId).emit("exitLobbyReceiverRes");
+    io.to(lobby.host.socket_id).emit("exitLobbyReceiverRes");
   } catch (error) {
     console.error(error);
   }

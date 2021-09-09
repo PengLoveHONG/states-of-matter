@@ -2,14 +2,14 @@ import {socketService} from "services";
 import {gameStore, lobbyStore, playerStore} from "stores/data";
 import {socialStore} from "stores/view";
 
-import type {Player} from "models/data";
+import type {Game, Lobby, Player} from "models/data";
 import type {Friend} from "models/view/Social";
 
 interface Params {
   player: Player;
   friends: Friend[];
-  lobby: any | undefined;
-  game: any | undefined;
+  lobby: Lobby | undefined;
+  game: Game | undefined;
 }
 
 const signin = (params: Params): void => {

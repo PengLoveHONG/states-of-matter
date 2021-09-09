@@ -1,39 +1,24 @@
 import type {App} from "../../models/App";
-import {status} from "../../models/Player";
 
 interface Params {
-  gameId: string;
+  game_id: number;
+  public_key: string;
+  signature: string;
 }
 
 const exitGame = async (app: App, params: Params): Promise<void> => {
+  const {eos, io, socket} = app;
+  const {game_id} = params;
+
   try {
-    const {io, mongo, socket} = app;
-    const {gameId} = params;
+    const game = await eos.findGame(game_id);
 
-    const lobby = await mongo.db.collection("lobbies").findOne({
-      gameId: parseInt(gameId)
-    });
+    await eos.pushAction("endgame", params);
 
-    if (!lobby) return;
-
-    await mongo.db.collection("players").updateOne({
-      username: lobby.host.username
-    }, {
-      $set: {
-        "account.status": status.ONLINE
-      }
-    });
-
-    await mongo.db.collection("players").updateOne({
-      username: lobby.challengee.username
-    }, {
-      $set: {
-        "account.status": status.ONLINE
-      }
-    });
+    const challengee = await eos.findPlayer(game.player_b);
 
     socket.emit("exitGameSenderRes");
-    io.to(lobby.challengee.socketId).emit("exitGameReceiverRes");
+    io.to(challengee.socketId).emit("exitGameReceiverRes");
   } catch (error) {
     console.error(error);
   }

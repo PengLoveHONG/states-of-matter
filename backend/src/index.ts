@@ -49,7 +49,7 @@ const init = async (): Promise<void> => {
     const app: App = {eos, mongo, io, socket};
 
     requestKeys.forEach((request) => {
-      socket.on(`${request}Req`, (params: object = {}) => {
+      socket.on(`${request}Req`, (params = {}) => {
         requests[request](app, params);
       });
     });

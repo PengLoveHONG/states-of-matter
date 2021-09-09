@@ -4,11 +4,15 @@
   import Deck from "./Deck.svelte";
   import Graveyard from "./Graveyard.svelte";
   import Hero from "./Hero.svelte";
-  import {socketService} from "services";
+  import {eccService, socketService} from "services";
   import {gameStore, lobbyStore, playerStore} from "stores/data";
 
   const exit = (): void => {
-    socketService.emit("exitGameReq", {gameId: $lobbyStore.lobby_id});
+    const {public_key, private_key} = $playerStore;
+    const {game_id} = $gameStore;
+    const signature = eccService.sign(`endgame:${game_id}`, private_key);
+
+    socketService.emit("exitGameReq", {game_id, public_key, signature});
   };
 </script>
 
@@ -40,11 +44,13 @@
 </style>
 
 <div class="game">
-  <!-- {#if $game.player.username === $player.mongo.username} -->
-    <!-- <button class="btn--raised-accent" on:click={exit}>EXIT</button> -->
-  <!-- {/if} -->
+  {#if $gameStore.player_a === $playerStore.username}
+    <button class="btn--raised-accent" on:click={exit}>END</button>
+  {/if}
   <div class="opponent">
-    <!-- <Hero/> -->
+    <p>
+      {$gameStore.player_b}
+    </p>
     <div class="player__right">
       <div class="player__cards">
         <Graveyard/>
@@ -55,7 +61,9 @@
     </div>
   </div>
   <div class="player">
-    <!-- <Hero/> -->
+    <p>
+      {$gameStore.player_a}
+    </p>
     <div class="player__right">
       <Fields/>
       <div class="player__cards">

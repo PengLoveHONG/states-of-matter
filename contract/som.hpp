@@ -13,7 +13,8 @@ CONTRACT som : public contract {
       datastream<const char *> ds
     ) : contract(receiver, code, ds),
         players_table(receiver, receiver.value),
-        lobbies_table(receiver, receiver.value) {};
+        lobbies_table(receiver, receiver.value),
+        games_table(receiver, receiver.value) {};
 
     struct account_t {
       string socket_id;
@@ -156,6 +157,38 @@ CONTRACT som : public contract {
       signature signature
     );
 
+    ACTION destroylobby(
+      uint64_t lobby_id,
+      public_key public_key,
+      signature signature
+    );
+
+    ACTION joinlobby(
+      uint64_t lobby_id,
+      public_key public_key,
+      signature signature
+    );
+
+    ACTION leavelobby(
+      uint64_t lobby_id,
+      public_key public_key,
+      signature signature
+    );
+
+    ACTION startgame(
+      uint64_t lobby_id,
+      public_key public_key,
+      signature signature
+    );
+
+    ACTION endgame(
+      uint64_t game_id,
+      public_key public_key,
+      signature signature
+    );
+
+    ACTION dummy();
+
     ACTION rmplayer(name username);
 
   private:
@@ -179,6 +212,14 @@ CONTRACT som : public contract {
       TABLE_PRIMARY_KEY(lobby_id);
     };
 
+    TABLE game {
+      uint64_t game_id;
+      name player_a;
+      name player_b;
+
+      TABLE_PRIMARY_KEY(game_id);
+    };
+
     typedef multi_index<
       "players"_n,
       player,
@@ -186,7 +227,9 @@ CONTRACT som : public contract {
     > players;
 
     typedef multi_index<"lobbies"_n, lobby> lobbies;
+    typedef multi_index<"games"_n, game> games;
 
     players players_table;
     lobbies lobbies_table;
+    games games_table;
 };

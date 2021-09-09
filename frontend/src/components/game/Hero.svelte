@@ -70,10 +70,6 @@
     padding: var(--spacing-sm);
     text-align: center;
   }
-
-  form {
-    width: 128px;
-  }
 </style>
 
 <div class="hero">

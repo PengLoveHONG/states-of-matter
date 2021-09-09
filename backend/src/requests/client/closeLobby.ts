@@ -1,23 +1,22 @@
 import type {App} from "../../models/App";
 
-interface Params { lobbyId: number; }
+interface Params {
+  lobby_id: number;
+  public_key: string;
+  signature: string;
+}
 
 const closeLobby = async (app: App, params: Params): Promise<void> => {
+  const {eos, io, socket} = app;
+  const {lobby_id} = params;
+
   try {
-    const {io, mongo, socket} = app;
-    const {lobbyId} = params;
+    const lobby = await eos.findLobby(lobby_id);
 
-    const deleted = await mongo
-      .db
-      .collection("lobbies")
-      .findOneAndDelete({lobbyId});
-
-    const lobby = deleted.value;
-
-    if (!lobby) return;
+    await eos.pushAction("destroylobby", params);
 
     socket.emit("closeLobbySenderRes");
-    io.to(lobby.challengee.socketId).emit("closeLobbyReceiverRes");
+    io.to(lobby.challengee.socket_id).emit("closeLobbyReceiverRes");
   } catch (error) {
     console.error(error);
   }

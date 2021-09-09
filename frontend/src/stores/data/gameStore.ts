@@ -4,45 +4,9 @@ import type {Writable} from "svelte/store";
 import type {Game} from "models/data";
 
 const gameStore: Writable<Game> = writable({
-  gameId: 0,
-  player: {
-    username: "",
-    socketId: "",
-    hero: {
-      hp: 100,
-      maxHp: 100
-    },
-    fields: {
-      trap: undefined,
-      minionA: undefined,
-      minionB: undefined,
-      minionC: undefined,
-      minionD: undefined,
-      magic: undefined
-    },
-    hand: [],
-    graveyard: [],
-    deck: []
-  },
-  opponent: {
-    username: "",
-    socketId: "",
-    hero: {
-      hp: 100,
-      maxHp: 100
-    },
-    fields: {
-      trap: undefined,
-      minionA: undefined,
-      minionB: undefined,
-      minionC: undefined,
-      minionD: undefined,
-      magic: undefined
-    },
-    hand: 0,
-    deck: 30,
-    graveyard: []
-  }
+  game_id: 0,
+  player_a: "",
+  player_b: ""
 });
 
 export default gameStore;

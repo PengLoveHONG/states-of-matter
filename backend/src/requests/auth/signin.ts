@@ -50,9 +50,7 @@ const signin = async (app: App, params: Params): Promise<void> => {
       if (player.account.lobby_id) {
         lobby = await eos.findLobby(player.account.lobby_id);
       } else if (player.account.game_id) {
-        game = await mongo.db.collection("games").findOne({
-          gameId: player.account.game_id
-        });
+        game = await eos.findGame(player.account.game_id);
       }
     }
 

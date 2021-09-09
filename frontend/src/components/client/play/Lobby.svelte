@@ -1,22 +1,29 @@
 <script lang="ts">
-  import {socketService} from "services";
+  import {eccService, socketService} from "services";
   import {lobbyStore, playerStore} from "stores/data";
 
   const start = (): void => {
-    socketService.emit("startGameReq", {lobbyId: $lobbyStore.lobby_id});
+    const {public_key, private_key} = $playerStore;
+    const {lobby_id} = $lobbyStore;
+    const signature = eccService.sign(`startgame:${lobby_id}`, private_key);
+
+    socketService.emit("startGameReq", {lobby_id, public_key, signature});
   };
 
   const close = (): void => {
-    socketService.emit("closeLobbyReq", {
-      lobbyId: $lobbyStore.lobby_id
-    });
+    const {public_key, private_key} = $playerStore;
+    const {lobby_id} = $lobbyStore;
+    const signature = eccService.sign(`destroylobby:${lobby_id}`, private_key);
+
+    socketService.emit("closeLobbyReq", {lobby_id, public_key, signature});
   };
 
   const exit = (): void => {
-    socketService.emit("exitLobbyReq", {
-      lobbyId: $lobbyStore.lobby_id,
-      username: $playerStore.username
-    });
+    const {public_key, private_key} = $playerStore;
+    const {lobby_id} = $lobbyStore;
+    const signature = eccService.sign(`leavelobby:${lobby_id}`, private_key);
+
+    socketService.emit("exitLobbyReq", {lobby_id, public_key, signature});
   };
 </script>
 

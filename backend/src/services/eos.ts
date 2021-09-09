@@ -57,6 +57,22 @@ class Eos {
     }
   }
 
+  async findGame(game_id: number) {
+    try {
+      const lobby = await this.api.rpc.get_table_rows({
+        code: this.contract,
+        scope: this.contract,
+        table: "games",
+        lower_bound: game_id,
+        upper_bound: game_id
+      });
+
+      return lobby.rows[0];
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
   async pushAction(action: string, data: any) {
     try {
       const transaction = await this.api.transact({

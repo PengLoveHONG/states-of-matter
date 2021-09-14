@@ -21,8 +21,17 @@ const init = async (): Promise<void> => {
   const server = createServer(app);
   const io = new Server(server, opts);
 
-  const client = await MongoClient.connect(uri);
-  const mongoDb = client.db("som");
+  let mongoClient;
+
+  try {
+    mongoClient = await MongoClient.connect(uri);
+  } catch (error) {
+    console.error(error);
+  }
+
+  if (!mongoClient) { return; }
+
+  const mongoDb = mongoClient.db("som");
 
   const rpc = new JsonRpc(endpoint, {fetch});
   const signatureProvider = new JsSignatureProvider([contractKey]);

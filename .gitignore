@@ -7,5 +7,5 @@ contract/inc
 contract/som.abi
 contract/som.wasm
 
-frontend/dist
+frontend/dist/build
 frontend/node_modules

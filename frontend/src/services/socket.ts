@@ -6,7 +6,7 @@ class SocketService {
   private readonly _socket: Socket;
 
   constructor () {
-    this._socket = io();
+    this._socket = io(/*"ws://localhost:4200"*/);
   }
 
   emit (event: string, data: object = {}): void {

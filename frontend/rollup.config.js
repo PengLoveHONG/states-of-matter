@@ -2,7 +2,6 @@ import commonjs from "@rollup/plugin-commonjs";
 import nodeResolve from "@rollup/plugin-node-resolve";
 import typescript from "@rollup/plugin-typescript";
 import cssOnly from "rollup-plugin-css-only";
-import livereload from "rollup-plugin-livereload";
 import svelte from "rollup-plugin-svelte";
 import {terser} from "rollup-plugin-terser";
 import preprocess from "svelte-preprocess";
@@ -38,7 +37,6 @@ export default {
         dev: !production
       }
     }),
-    !production && livereload("dist"),
     production && terser()
   ],
   watch: {

@@ -16,6 +16,8 @@ const signin = (params: Params): void => {
   const {player, friends, lobby, game} = params;
   const socketIds: Array<string> = [];
 
+  console.log("signin");
+
   playerStore.update((store) => {
     store.username = player.username;
     store.public_key = player.public_key;

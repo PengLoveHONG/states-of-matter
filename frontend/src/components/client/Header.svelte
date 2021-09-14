@@ -109,7 +109,6 @@
 </style>
 
 <header class="header">
-
   <nav>
     <ul class="links">
       <li class="link" id="playLink" on:click={gotoPlay}>PLAY</li>

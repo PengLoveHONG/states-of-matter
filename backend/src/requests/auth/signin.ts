@@ -12,6 +12,8 @@ const signin = async (app: App, params: Params): Promise<void> => {
   const {eos, mongo, socket} = app;
   const {username} = params;
 
+  console.log("signin");
+
   try {
     const friends = [];
     const socket_id = socket.id;

@@ -1,12 +1,20 @@
 <script lang="ts">
   import {createEventDispatcher} from "svelte";
-  import {socketService} from "services";
+  import {cryptoService, eccService, socketService} from "services";
   import {authStore} from "stores/data";
 
   const dispatch = createEventDispatcher();
 
-  const onSignup = (): void => {
-    socketService.emit("signupReq", $authStore.signupForm);
+  const onSignup = async (): Promise<void> => {
+    const private_key = await eccService.randomKey();
+    const public_key = eccService.toPublic(private_key);
+    const private_key_hash = cryptoService.encrypt(private_key, $authStore.signupForm.password);
+
+    socketService.emit("signupReq", {
+      username: $authStore.signupForm.username,
+      public_key,
+      private_key_hash
+    });
   };
 
   const onGotoSignin = (): void => { dispatch("gotoSignin"); };

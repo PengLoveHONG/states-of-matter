@@ -8,10 +8,9 @@ const socialStore: Writable<Social> = writable({
   friends: [],
   chat: {
     username: "",
-    socketId: "",
-    avatarId: 1,
+    avatar_id: 1,
     status: status.OFFLINE,
-    isOpen: false,
+    is_open: false,
     messages: []
   }
 });

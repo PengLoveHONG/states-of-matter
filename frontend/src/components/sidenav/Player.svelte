@@ -6,17 +6,10 @@
   import {status} from "models/data/Player";
 
   const logout = (): void => {
-    const socketIds = $socialStore.friends.reduce((acc, friend) => {
-      if (friend.socketId) {acc.push(friend.socketId);}
-      return acc;
-    }, [] as Array<string>);
+    socketService.emit("signout", {username: $playerStore.username});
 
-    socketService.emit("signoutReq", {username: $playerStore.username});
-
-    socketService.emit("updateFriendReq", {
-      socketIds,
+    socketService.emit("updateFriend", {
       username: $playerStore.username,
-      socketId: "",
       status: status.OFFLINE
     });
 
@@ -26,7 +19,6 @@
       private_key: "",
       private_key_hash: "",
       account: {
-        socket_id: "",
         status: 0,
         xp: 0,
         lv: 1,
@@ -48,9 +40,8 @@
       chat: {
         username: "",
         status: status.OFFLINE,
-        socketId: "",
-        avatarId: 1,
-        isOpen: false,
+        avatar_id: 1,
+        is_open: false,
         messages: []
       }
     };

@@ -1,86 +1,112 @@
 import {RpcError} from "eosjs";
-import settings from "../settings";
+import settings from "../settings.js";
 
 import type {Api} from "eosjs";
+import type {GetTableRowsResult, PushTransactionArgs, ReadOnlyTransactResult} from "eosjs/dist/eosjs-rpc-interfaces";
 import type {Socket} from "socket.io";
+import type {Game} from "../models/Game";
+import type {Lobby} from "../models/Lobby";
+import type {Player} from "../models/Player";
+import { TransactResult } from "eosjs/dist/eosjs-api-interfaces";
 
 class Eos {
-  public readonly api: Api;
-  public readonly socket: Socket;
-  public readonly contract: string;
+  constructor(
+    private readonly _api: Api,
+    private readonly _socket: Socket
+  ) {}
 
-  constructor(api: Api, socket: Socket) {
-    this.api = api;
-    this.socket = socket;
-    this.contract = settings.eos.contractAccount;
+  private _handleError(name: string, error: unknown): void {
+    console.log("");
+    console.log(`========== ${name} ==========`);
+
+    if (error instanceof RpcError) {
+      const msg = error.json.error.details[0].message;
+
+      console.error(msg);
+      this._socket.emit("notification", {msg});
+    } else if (error instanceof Error) {
+      const msg = error.message;
+
+      console.error(msg);
+      this._socket.emit("notification", {msg});
+    }
+
+    console.log(`========== ${name} ==========`);
+    console.log("");
   }
 
-  async findPlayer(username: string) {
+  public async findPlayer(username: string): Promise<Player | undefined> {
+    const {contractAccount} = settings.eos;
+    let table!: GetTableRowsResult;
+
     try {
-      const player = await this.api.rpc.get_table_rows({
-        code: this.contract,
-        scope: this.contract,
+      table = await this._api.rpc.get_table_rows({
+        code: contractAccount,
+        scope: contractAccount,
         table: "players",
         lower_bound: username,
-        upper_bound: username
+        upper_bound: username,
+        limit: 1
       });
-
-      return player.rows[0];
     } catch (error) {
-      console.log("");
-      console.log("========== findPlayer() ==========");
-      if (error instanceof RpcError) {
-        console.log(error.json.error.details[0].message);
-
-        this.socket.emit("notificationRes", {
-          msg: error.json.error.details[0].message
-        });
-      }
-      console.log("========== findPlayer() ==========");
-      console.log("");
+      this._handleError("findPlayer", error);
     }
+
+    return table.rows[0];
   }
 
-  async findLobby(lobby_id: number) {
+  public async findLobby(lobby_id: number): Promise<Lobby | undefined> {
+    const {contractAccount} = settings.eos;
+    let table!: GetTableRowsResult;
+
     try {
-      const lobby = await this.api.rpc.get_table_rows({
-        code: this.contract,
-        scope: this.contract,
+      table = await this._api.rpc.get_table_rows({
+        code: contractAccount,
+        scope: contractAccount,
         table: "lobbies",
         lower_bound: lobby_id,
         upper_bound: lobby_id
       });
-
-      return lobby.rows[0];
     } catch (error) {
-      console.error(error);
+      this._handleError("findLobby", error);
     }
+
+    return table.rows[0];
   }
 
-  async findGame(game_id: number) {
+  public async findGame(game_id: number): Promise<Game | undefined> {
+    const {contractAccount} = settings.eos;
+    let table!: GetTableRowsResult;
+
     try {
-      const lobby = await this.api.rpc.get_table_rows({
-        code: this.contract,
-        scope: this.contract,
+      table = await this._api.rpc.get_table_rows({
+        code: contractAccount,
+        scope: contractAccount,
         table: "games",
         lower_bound: game_id,
         upper_bound: game_id
       });
-
-      return lobby.rows[0];
     } catch (error) {
-      console.error(error);
+      this._handleError("findGame", error);
     }
+
+    return table.rows[0];
   }
 
-  async pushAction(action: string, data: any) {
+  public async pushAction(
+    action: string,
+    data: object
+  ): Promise<TransactResult | ReadOnlyTransactResult | PushTransactionArgs | undefined> {
+    const {contractAccount} = settings.eos;
+    let transaction!: TransactResult | ReadOnlyTransactResult | PushTransactionArgs;
+
     try {
-      const transaction = await this.api.transact({
+      transaction = await this._api.transact({
         actions: [{
-          account: this.contract,
+          account: contractAccount,
           name: action,
           authorization: [{
-            actor: this.contract,
+            actor: contractAccount,
             permission: "active"
           }],
           data
@@ -89,17 +115,11 @@ class Eos {
         blocksBehind: 3,
         expireSeconds: 30
       });
-
-      return transaction;
-    } catch (error: any) {
-      console.log("");
-      console.log("========== pushAction() ==========");
-      console.log(error.toString());
-      console.log("========== pushAction() ==========");
-      console.log("");
-
-      this.socket.emit("notificationRes", {msg: error.toString()});
+    } catch (error) {
+      this._handleError("pushAction", error);
     }
+
+    return transaction;
   }
 }
 

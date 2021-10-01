@@ -9,43 +9,40 @@
   let chatMessagesRef: HTMLElement;
 
   const onTip = (): void => {
-    const {username, socketId} = $socialStore.chat;
-    miscService.openModal("tip", {username, socketId});
+    const {username} = $socialStore.chat;
+    miscService.openModal("tip", {username});
   };
 
   const onGift = (): void => {
-    const {username, socketId} = $socialStore.chat;
-    miscService.openModal("gift", {username, socketId});
+    const {username} = $socialStore.chat;
+    miscService.openModal("gift", {username});
   };
 
   const onUnfriend = (): void => {
-    const {username, socketId} = $socialStore.chat;
-    miscService.openModal("unfriend", {username, socketId});
+    const {username} = $socialStore.chat;
+    miscService.openModal("unfriend", {username});
   };
 
   const onBlock = (): void => {
-    const {username, socketId} = $socialStore.chat;
-    miscService.openModal("block", {username, socketId});
+    const {username} = $socialStore.chat;
+    miscService.openModal("block", {username});
   };
 
-  const onChatClose = (): void => { $socialStore.chat.isOpen = false; };
+  const onChatClose = (): void => { $socialStore.chat.is_open = false; };
 
   const onSendMessage = (): void => {
     if (text) {
       const sender = {username: $playerStore.username};
-      const receiver = {
-        username: $socialStore.chat.username,
-        socketId: $socialStore.chat.socketId
-      };
+      const receiver = {username: $socialStore.chat.username};
       const date = new Date();
 
-      socketService.emit("sendChatMsgReq", {sender, receiver, text, date});
+      socketService.emit("sendChatMsg", {sender, receiver, text, date});
       text = "";
     }
   };
 
   onMount(() => {
-    if ($socialStore.chat.isOpen) {
+    if ($socialStore.chat.is_open) {
       chatMessagesRef.scrollTo(0, chatMessagesRef.scrollHeight);
     }
   });
@@ -75,7 +72,7 @@
   });
 
   afterUpdate(() => {
-    if ($socialStore.chat.isOpen) {
+    if ($socialStore.chat.is_open) {
       chatMessagesRef.scrollTo(0, chatMessagesRef.scrollHeight);
     }
   });
@@ -165,7 +162,7 @@
   }
 </style>
 
-{#if $socialStore.chat.isOpen}
+{#if $socialStore.chat.is_open}
   <div class="chat">
     <header class="chat__header">
       <div>
@@ -196,7 +193,7 @@
             src="assets/avatars/{
               message.username === $playerStore.username ?
               $playerStore.account.avatar_id :
-              $socialStore.chat.avatarId
+              $socialStore.chat.avatar_id
             }.jpg"
             alt="Player avatar">
 

@@ -15,8 +15,7 @@ const joinLobbySender = (params: Params): void => {
     return store;
   });
 
-  socketService.emit("updateFriendReq", {
-    socketIds: miscService.getSocketIds(),
+  socketService.emit("updateFriend", {
     username: player.username,
     status: status.INLOBBY
   });

@@ -7,7 +7,7 @@
     const {lobby_id} = $lobbyStore;
     const signature = eccService.sign(`startgame:${lobby_id}`, private_key);
 
-    socketService.emit("startGameReq", {lobby_id, public_key, signature});
+    socketService.emit("startGame", {lobby_id, public_key, signature});
   };
 
   const close = (): void => {
@@ -15,7 +15,7 @@
     const {lobby_id} = $lobbyStore;
     const signature = eccService.sign(`destroylobby:${lobby_id}`, private_key);
 
-    socketService.emit("closeLobbyReq", {lobby_id, public_key, signature});
+    socketService.emit("closeLobby", {lobby_id, public_key, signature});
   };
 
   const exit = (): void => {
@@ -23,7 +23,7 @@
     const {lobby_id} = $lobbyStore;
     const signature = eccService.sign(`leavelobby:${lobby_id}`, private_key);
 
-    socketService.emit("exitLobbyReq", {lobby_id, public_key, signature});
+    socketService.emit("exitLobby", {lobby_id, public_key, signature});
   };
 </script>
 

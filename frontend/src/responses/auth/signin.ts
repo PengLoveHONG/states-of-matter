@@ -14,14 +14,11 @@ interface Params {
 
 const signin = (params: Params): void => {
   const {player, friends, lobby, game} = params;
-  const socketIds: Array<string> = [];
-
-  console.log("signin");
+  const {username, account: {status}} = player;
 
   playerStore.update((store) => {
     store.username = player.username;
     store.public_key = player.public_key;
-    // store.private_key_hash = player.private_key_hash;
     store.account = player.account;
     store.decks = player.decks;
     store.social = player.social;
@@ -34,19 +31,10 @@ const signin = (params: Params): void => {
     return store;
   });
 
-  friends.forEach(({socketId}) => {
-    if (socketId) { socketIds.push(socketId); }
-  });
-
   if (lobby) { lobbyStore.set(lobby); }
   if (game) { gameStore.set(game); }
 
-  socketService.emit("updateFriendReq", {
-    socketIds,
-    username: player.username,
-    socketId: player.account.socket_id,
-    status: player.account.status
-  });
+  socketService.emit("updateFriend", {username, status});
 };
 
 export default signin;

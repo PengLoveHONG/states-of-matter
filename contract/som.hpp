@@ -14,7 +14,6 @@ CONTRACT som : public contract {
       games_table(receiver, receiver.value) {};
 
     struct account_t {
-      string socket_id;
       uint8_t status;
       uint16_t xp;
       uint16_t lv;
@@ -51,19 +50,17 @@ CONTRACT som : public contract {
 
     struct host_t {
       name username;
-      string socket_id;
       uint8_t avatar_id;
     };
 
     struct challengee_t {
       name username;
-      string socket_id;
       uint8_t avatar_id;
     };
 
-    ACTION signin(string socket_id, name username, public_key public_key, signature signature);
+    ACTION signin(name username, public_key public_key, signature signature);
     ACTION signout(name username, public_key public_key, signature signature);
-    ACTION signup(name username, public_key public_key, string private_key_hash);
+    ACTION signup(name username, public_key public_key);
 
     ACTION savedeck(deck_cards_t cards, public_key public_key, signature signature);
     ACTION selectdeck(uint8_t deck_id, public_key public_key, signature signature);
@@ -85,15 +82,14 @@ CONTRACT som : public contract {
     ACTION startgame(uint64_t lobby_id, public_key public_key, signature signature);
     ACTION endgame(uint64_t game_id, public_key public_key, signature signature);
 
-    ACTION dummy();
-
     ACTION rmplayer(name username);
+    ACTION rmlobby(uint64_t lobby_id);
+    ACTION rmgame(uint64_t game_id);
 
   private:
     TABLE player {
       name username;
       public_key public_key;
-      string private_key_hash;
       account_t account;
       decks_t decks;
       social_t social;

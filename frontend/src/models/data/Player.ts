@@ -14,7 +14,6 @@ interface Deck {
 }
 
 interface Account {
-  socket_id: string;
   status: number;
   xp: number;
   lv: number;

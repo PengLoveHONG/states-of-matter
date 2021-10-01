@@ -9,9 +9,8 @@
     const {public_key, private_key} = $playerStore;
     const signature = eccService.sign(`acceptfriend:${username}`, private_key);
 
-    socketService.emit("acceptFriendReq", {
+    socketService.emit("acceptFriend", {
       friendname: username,
-      friendSocketId: "",
       username: $playerStore.username,
       public_key,
       signature
@@ -22,7 +21,7 @@
     const {public_key, private_key} = $playerStore;
     const signature = eccService.sign(`declfriend:${username}`, private_key);
 
-    socketService.emit("declineFriendReq", {username, public_key, signature});
+    socketService.emit("declineFriend", {username, public_key, signature});
   };
 
   export {username};

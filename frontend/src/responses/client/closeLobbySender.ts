@@ -25,7 +25,7 @@ const closeLobbySender = (): void => {
     return store;
   });
 
-  socketService.emit("updateFriendReq", {
+  socketService.emit("updateFriend", {
     socketIds: miscService.getSocketIds(),
     username: player.username,
     status: player.account.status

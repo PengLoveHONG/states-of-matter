@@ -7,7 +7,7 @@
 
   const onSignin = (): void => {
     const {username} = $authStore.signinForm;
-    socketService.emit("getPrivateKeyHashReq", {username});
+    socketService.emit("getPrivateKeyHash", {username});
   };
 
   const onGotoSignup = (): void => { dispatch("gotoSignup"); };

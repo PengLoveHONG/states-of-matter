@@ -13,15 +13,15 @@
   };
 
   const onChat = (): void => {
-    const {username, socketId, status, avatarId, messages} = friend;
+    const {username, status, avatar_id, messages} = friend;
 
     isActionsVisible = !isActionsVisible;
 
     if ($socialStore.chat.username === username) {
-      $socialStore.chat.isOpen = true;
+      $socialStore.chat.is_open = true;
     } else {
-      const isOpen = true;
-      $socialStore.chat = {username, status, socketId, avatarId, isOpen, messages};
+      const is_open = true;
+      $socialStore.chat = {username, status, avatar_id, is_open, messages};
     }
   };
 
@@ -72,7 +72,7 @@
     <div class="friend__main__avatar">
       <img
         class="friend__main__avatar__img"
-        src="assets/avatars/{friend.avatarId}.jpg"
+        src="assets/avatars/{friend.avatar_id}.jpg"
         alt="{friend.username} avatar">
     </div>
 

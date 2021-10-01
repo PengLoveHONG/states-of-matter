@@ -3,12 +3,7 @@
   import {gameStore} from "stores/data";
 
   const onPlayCard = (): void => {
-    socketService.emit("playCardReq", {
-      gameId: $gameStore.gameId,
-      id: 0,
-      gid: 0,
-      field
-    });
+    socketService.emit("playCard", {});
   };
 
   export let field;

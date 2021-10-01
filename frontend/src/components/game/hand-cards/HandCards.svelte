@@ -35,35 +35,35 @@
 <div class="player__hand">
   <div class="player__hand__card">
     {#if belongsTo === "opponent"}
-      <img class="player__deck__img" src="assets/card-backs/default.jpg">
+      <img class="player__deck__img" src="assets/card-backs/default.jpg" alt="">
     {:else}
       <Card card={{...cards.get(4)[4], skinId: 0, klass: 4}}/>
     {/if}
   </div>
   <div class="player__hand__card">
     {#if belongsTo === "opponent"}
-      <img class="player__deck__img" src="assets/card-backs/default.jpg">
+      <img class="player__deck__img" src="assets/card-backs/default.jpg" alt="">
     {:else}
       <Card card={{...cards.get(4)[4], skinId: 0, klass: 4}}/>
     {/if}
   </div>
   <div class="player__hand__card">
     {#if belongsTo === "opponent"}
-      <img class="player__deck__img" src="assets/card-backs/default.jpg">
+      <img class="player__deck__img" src="assets/card-backs/default.jpg" alt="">
     {:else}
       <Card card={{...cards.get(4)[5], skinId: 0, klass: 4}}/>
     {/if}
   </div>
   <div class="player__hand__card">
     {#if belongsTo === "opponent"}
-      <img class="player__deck__img" src="assets/card-backs/default.jpg">
+      <img class="player__deck__img" src="assets/card-backs/default.jpg" alt="">
     {:else}
       <Card card={{...cards.get(4)[7], skinId: 0, klass: 4}}/>
     {/if}
   </div>
   <div class="player__hand__card">
     {#if belongsTo === "opponent"}
-      <img class="player__deck__img" src="assets/card-backs/default.jpg">
+      <img class="player__deck__img" src="assets/card-backs/default.jpg" alt="">
     {:else}
       <Card card={{...cards.get(4)[9], skinId: 0, klass: 4}}/>
     {/if}

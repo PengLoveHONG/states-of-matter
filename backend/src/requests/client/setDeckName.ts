@@ -10,13 +10,9 @@ interface Params {
 const setDeckName = async (app: App, params: Params): Promise<void> => {
   const {eos, socket} = app;
   const {id, name} = params;
+  const trx = await eos.pushAction("setdeckname", params);
 
-  try {
-    await eos.pushAction("setdeckname", params);
-    socket.emit("setDeckNameRes", {id, name});
-  } catch (error) {
-    console.error(error);
-  }
+  if (trx) { socket.emit("setDeckName", {id, name}); }
 };
 
 export default setDeckName;

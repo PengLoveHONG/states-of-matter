@@ -9,7 +9,7 @@
     const {public_key, private_key} = $playerStore;
     const signature = eccService.sign(`unblckfriend:${friendname}`, private_key);
 
-    socketService.emit("unblockReq", {friendname, public_key, signature});
+    socketService.emit("unblock", {friendname, public_key, signature});
   };
 
   export {friendname};

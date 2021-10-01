@@ -17,24 +17,24 @@
   $: friendsToggleIcon = isFriendsToggled ? "chevron-up" : "chevron-down";
   $: requestsToggleIcon = isRequestsToggled ? "chevron-up" : "chevron-down";
   $: blockedToggleIcon = isBlockedToggled ? "chevron-up" : "chevron-down";
-  /** Slide transition */
+
   const transitionSlide: SlideParams = {
     duration: 333,
     easing: quadInOut
   }
-  /** Open add friend modal. */
+
   const addFriendModal = (): void => {
     miscService.openModal("addFriend");
   };
-  /** Toggle friends menu. */
+
   const toggleFriends = (): void => {
     isFriendsToggled = !isFriendsToggled;
   };
-  /** Toggle requests menu. */
+
   const toggleRequests = (): void => {
     isRequestsToggled = !isRequestsToggled;
   };
-  /** Toggle blocked menu. */
+
   const toggleBlocked = (): void => {
     isBlockedToggled = !isBlockedToggled;
   };

@@ -11,6 +11,8 @@
   import {socketService} from "services";
   import {playerStore} from "stores/data";
 
+  $: status = $playerStore.account.status;
+
   onMount(() => { socketService.listenToResponses(responses); });
 </script>
 
@@ -28,17 +30,13 @@
 </style>
 
 <div class="game">
-  {#if $playerStore.account.status === 0}
+  {#if status === 0}
     <Auth/>
   {:else}
     <main class="game__content">
-      {#if
-        $playerStore.account.status === 1 ||
-        $playerStore.account.status === 2 ||
-        $playerStore.account.status === 3
-      }
+      {#if status === 1 || status === 2 || status === 3}
         <Client/>
-      {:else if $playerStore.account.status === 4}
+      {:else if status === 4}
         <Game/>
       {/if}
     </main>

@@ -11,7 +11,7 @@
     const deck_id = id;
     const signature = eccService.sign(`selectdeck:${deck_id}`, private_key);
 
-    socketService.emit("selectDeckReq", {deck_id, public_key, signature});
+    socketService.emit("selectDeck", {deck_id, public_key, signature});
   };
 
   const changeDeckName = (id: number): void => {

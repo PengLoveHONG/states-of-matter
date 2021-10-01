@@ -1,65 +1,56 @@
 import type {App} from "../../models/App";
-import type { Chat } from "../../models/Chat";
-import type {Player} from "../../models/Player";
 
 interface Params {
   username: string;
   public_key: string;
   signature: string;
+  signatures: { signature: string; }
 }
 
 const signin = async (app: App, params: Params): Promise<void> => {
   const {eos, mongo, socket} = app;
-  const {username} = params;
+  const {username, signatures} = params;
+  const friends = [];
+  const socket_id = socket.id;
+  let lobby;
+  let game;
 
-  console.log("signin");
+  const [trx, updated] = await Promise.all([
+    eos.pushAction("signin", params),
+    mongo.updatePlayer(username, {socket_id, signatures})
+  ]);
 
-  try {
-    const friends = [];
-    const socket_id = socket.id;
+  if (!trx || !updated) { return; }
 
-    await eos.pushAction("signin", {socket_id, ...params});
+  const player = await eos.findPlayer(username);
 
-    const player: Player = await eos.findPlayer(username);
+  if (!player) { return; }
 
-    let lobby;
-    let game;
+  for (const friendname of player.social.friends) {
+    const [friendEos, chat] = await Promise.all([
+      eos.findPlayer(friendname),
+      mongo.findChat(username, friendname)
+    ]);
 
-    if (player) {
-      for (const friendname of player.social.friends) {
-        const friend = await eos.findPlayer(friendname);
+    if (!friendEos || !chat) { return; }
 
-        if (friend) {
-          const chat = await mongo.db.collection("chats").findOne({
-            players: {$all: [username, friendname]}
-          });
-          
-          if (!chat) { return; }
+    const {status, avatar_id} = friendEos.account;
+    const {messages} = chat;
 
-          const {status, socket_id, avatar_id} = friend.account;
-          const {messages} = chat;
-
-          friends.push({
-            username: friendname,
-            status,
-            socketId: socket_id,
-            avatarId: avatar_id,
-            messages
-          });
-        }
-      }
-
-      if (player.account.lobby_id) {
-        lobby = await eos.findLobby(player.account.lobby_id);
-      } else if (player.account.game_id) {
-        game = await eos.findGame(player.account.game_id);
-      }
-    }
-
-    socket.emit("signinRes", {player, friends, lobby, game});
-  } catch (error) {
-    console.error(error);
+    friends.push({username: friendname, status, avatar_id, messages});
   }
+
+  if (player.account.lobby_id) {
+    lobby = await eos.findLobby(player.account.lobby_id);
+
+    if (!lobby) { return; }
+  } else if (player.account.game_id) {
+    game = await eos.findGame(player.account.game_id);
+
+    if (!game) { return; }
+  }
+
+  socket.emit("signin", {player, friends, lobby, game});
 };
 
 export default signin;

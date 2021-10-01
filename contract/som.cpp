@@ -1,11 +1,6 @@
 #include "som.hpp"
 
-ACTION som::signin(
-  string socket_id,
-  name username,
-  public_key public_key,
-  signature signature
-) {
+ACTION som::signin(name username, public_key public_key, signature signature) {
   string msg = format_string("signin:%s", username.to_string().c_str());
   checksum256 digest = sha256(msg.c_str(), msg.length());
   assert_recover_key(digest, signature, public_key);
@@ -17,16 +12,10 @@ ACTION som::signin(
     if (row.account.lobby_id > 0) { row.account.status = INLOBBY; }
     else if (row.account.game_id > 0) { row.account.status = INGAME; }
     else { row.account.status = ONLINE; }
-
-    row.account.socket_id = socket_id;
   });
 }
 
-ACTION som::signout(
-  name username,
-  public_key public_key,
-  signature signature
-) {
+ACTION som::signout(name username, public_key public_key, signature signature) {
   string msg = format_string("signout:%s", username.to_string().c_str());
   checksum256 digest = sha256(msg.c_str(), msg.length());
   assert_recover_key(digest, signature, public_key);
@@ -34,22 +23,15 @@ ACTION som::signout(
   auto index = players_table.get_index<by_public_key>();
   auto player = index.find(public_key_to_fixed_bytes(public_key));
 
-  index.modify(player, _self, [&](auto &row) {
-    row.account.socket_id = "";
-    row.account.status = OFFLINE;
-  });
+  index.modify(player, _self, [&](auto &row) { row.account.status = OFFLINE; });
 }
 
-ACTION som::signup(
-  name username,
-  public_key public_key,
-  string private_key_hash
-) {
+ACTION som::signup(name username, public_key public_key) {
   auto player = players_table.find(username.value);
 
   check(player == players_table.end(), "Username taken.");
 
-  account_t account = {"", OFFLINE, 0, 1, 0, 0, 0, 0};
+  account_t account = {OFFLINE, 0, 1, 0, 0, 0, 0};
   decks_t decks = {
     {0, "solid"_n, SOLID, {}},
     {1, "liquid"_n, LIQUID, {}},
@@ -61,7 +43,6 @@ ACTION som::signup(
   players_table.emplace(_self, [&](auto &row) {
     row.username = username;
     row.public_key = public_key;
-    row.private_key_hash = private_key_hash;
     row.account = account;
     row.decks = decks;
     row.social = social;
@@ -343,7 +324,6 @@ ACTION som::makelobby(
     row.lobby_id = lobby_id;
     row.host = {
       player->username,
-      player->account.socket_id,
       player->account.avatar_id
     };
     row.challengee = {};
@@ -374,10 +354,12 @@ ACTION som::destroylobby(
     row.account.status = ONLINE;
   });
 
-  players_table.modify(challengee, _self, [&](auto &row) {
-    row.account.lobby_id = 0;
-    row.account.status = ONLINE;
-  });
+  if (challengee != players_table.end()) {
+    players_table.modify(challengee, _self, [&](auto &row) {
+      row.account.lobby_id = 0;
+      row.account.status = ONLINE;
+    });
+  }
 
   lobbies_table.erase(lobby);
 }
@@ -395,10 +377,11 @@ ACTION som::joinlobby(
   auto player = index.find(public_key_to_fixed_bytes(public_key));
   auto lobby = lobbies_table.find(lobby_id);
 
+  check(lobby->challengee.username != ""_n, "Lobby is full.");
+
   lobbies_table.modify(lobby, _self, [&](auto &row) {
     row.challengee = {
       player->username,
-      player->account.socket_id,
       player->account.avatar_id
     };
   });
@@ -494,11 +477,17 @@ ACTION som::endgame(
   games_table.erase(game);
 }
 
-ACTION som::dummy() {}
-
 ACTION som::rmplayer(name username) {
   auto player = players_table.find(username.value);
   players_table.erase(player);
+}
+ACTION som::rmlobby(uint64_t lobby_id) {
+  auto lobby = lobbies_table.find(lobby_id);
+  lobbies_table.erase(lobby);
+}
+ACTION som::rmgame(uint64_t game_id) {
+  auto game = games_table.find(game_id);
+  games_table.erase(game);
 }
 
 EOSIO_DISPATCH(
@@ -528,6 +517,7 @@ EOSIO_DISPATCH(
   (startgame)
   (endgame)
   // Dev
-  (dummy)
   (rmplayer)
+  (rmlobby)
+  (rmgame)
 );

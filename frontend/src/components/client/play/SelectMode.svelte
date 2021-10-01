@@ -7,7 +7,7 @@
     const lobby_id = Math.floor(Math.random() * 1000000000);
     const signature = eccService.sign(`makelobby:${lobby_id}`, private_key);
 
-    socketService.emit("createLobbyReq", {lobby_id, public_key, signature});
+    socketService.emit("createLobby", {lobby_id, public_key, signature});
   };
 
   const join = (): void => {

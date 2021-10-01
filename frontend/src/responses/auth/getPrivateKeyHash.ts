@@ -12,13 +12,15 @@ const getPrivateKeyHash = (params: Params): void => {
   if (private_key) {
     const public_key = eccService.toPublic(private_key);
     const signature = eccService.sign(`signin:${username}`, private_key);
+    const signout = eccService.sign(`signout:${username}`, private_key);
+    const signatures = {signout};
 
     playerStore.update((store) => {
       store.private_key = private_key;
       return store;
     });
 
-    socketService.emit("signinReq", {username, public_key, signature});
+    socketService.emit("signin", {username, public_key, signature, signatures});
   } else {
     miscService.showNotification("Wrong password.");
   }

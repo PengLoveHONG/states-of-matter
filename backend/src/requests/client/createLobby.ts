@@ -8,15 +8,10 @@ interface Params {
 
 const createLobby = async (app: App, params: Params): Promise<void> => {
   const {eos, socket} = app;
-  const {lobby_id, public_key, signature} = params;
+  const trx = await eos.pushAction("makelobby", params);
+  const lobby = await eos.findLobby(params.lobby_id);
 
-  try {
-    await eos.pushAction("makelobby", params);
-    const lobby = eos.findLobby(lobby_id);
-    socket.emit("createLobbyRes", {lobby});
-  } catch (error) {
-    console.error(error);
-  }
+  if (trx && lobby) { socket.emit("createLobby", {lobby}); }
 };
 
 export default createLobby;

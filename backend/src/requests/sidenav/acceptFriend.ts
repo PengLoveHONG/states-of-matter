@@ -2,43 +2,39 @@ import type {App} from "../../models/App";
 
 interface Params {
   friendname: string;
-  friendSocketId: string;
   username: string;
   public_key: string;
   signature: string;
 }
 
 const acceptFriend = async (app: App, params: Params): Promise<void> => {
-  const {eos, io, mongo, socket} = app;
-  const {friendname, friendSocketId, username, public_key, signature} = params;
+  const {eos, mongo, io, socket} = app;
+  const {friendname, username, public_key, signature} = params;
 
-  try {
-    await eos.pushAction("acceptfriend", {friendname, public_key, signature});
+  const trx = await eos.pushAction("acceptfriend", {friendname, public_key, signature});
 
-    const sender = await eos.findPlayer(params.username);
-    const receiver = await eos.findPlayer(params.friendname);
+  if (!trx) { return; }
 
-    await mongo.db.collection("chats").insertOne({
-      players: [friendname, username],
-      messages: []
-    });
+  const [sender, receiver, receiverMongo, inserted] = await Promise.all([
+    eos.findPlayer(params.username),
+    eos.findPlayer(params.friendname),
+    mongo.findPlayer(params.friendname),
+    mongo.insertChat(username, friendname)
+  ]);
 
-    socket.emit("acceptFriendSenderRes", {
-      username: params.friendname,
-      avatarId: receiver.account.avatar_id,
-      status: receiver.account.status
-    });
+  if (!sender || !receiver || !receiverMongo || !inserted) { return; }
 
-    if (friendSocketId) {
-      io.to(friendSocketId).emit("acceptFriendReceiverRes", {
-        username: params.username,
-        avatarId: sender.account.avatar_id,
-        status: sender.account.status
-      });
-    }
-  } catch (error) {
-    console.error(error);
-  }
+  socket.emit("acceptFriendSender", {
+    username: params.friendname,
+    avatarId: receiver.account.avatar_id,
+    status: receiver.account.status
+  });
+
+  io.to(receiverMongo.socket_id).emit("acceptFriendReceiver", {
+    username: params.username,
+    avatarId: sender.account.avatar_id,
+    status: sender.account.status
+  });
 };
 
 export default acceptFriend;

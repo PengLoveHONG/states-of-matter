@@ -6,7 +6,7 @@ class SocketService {
   private readonly _socket: Socket;
 
   constructor () {
-    this._socket = io(/*"ws://localhost:4200"*/);
+    this._socket = io("ws://localhost:4200");
   }
 
   emit (event: string, data: object = {}): void {
@@ -15,7 +15,7 @@ class SocketService {
 
   listenToResponses (responses): void {
     Object.keys(responses).forEach((response) => {
-      this._socket.on(`${response}Res`, (params = {}) => {
+      this._socket.on(response, (params = {}) => {
         responses[response](params);
       });
     });

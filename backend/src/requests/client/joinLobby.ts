@@ -7,21 +7,19 @@ interface Params {
 }
 
 const joinLobby = async (app: App, params: Params): Promise<void> => {
-  const {eos, io, socket} = app;
+  const {eos, mongo, io, socket} = app;
   const {lobby_id} = params;
+  const trx = await eos.pushAction("joinlobby", params);
+  const lobby = await eos.findLobby(lobby_id);
 
-  try {
-    await eos.pushAction("joinlobby", params);
+  if (trx && lobby) {
+    const {challengee} = lobby;
+    const host = await mongo.findPlayer(lobby.host.username);
 
-    const lobby = await eos.findLobby(lobby_id);
+    if (!host) { return; }
 
-    socket.emit("joinLobbySenderRes", {lobby});
-
-    io.to(lobby.host.socket_id).emit("joinLobbyReceiverRes", {
-      challengee: lobby.challengee
-    });
-  } catch (error) {
-    console.error(error);
+    socket.emit("joinLobbySender", {lobby});
+    io.to(host.socket_id).emit("joinLobbyReceiver", {challengee});
   }
 };
 

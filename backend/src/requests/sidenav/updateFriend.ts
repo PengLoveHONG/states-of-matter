@@ -1,20 +1,21 @@
 import type {App} from "../../models/App";
 
 interface Params {
-  socketIds: string[];
   username: string;
-  socketId: string;
   status: number;
 }
 
-const updateFriend = (app: App, params: Params): void => {
-  const {mongo, io} = app;
-  const {socketIds, username, socketId, status} = params;
+const updateFriend = async (app: App, params: Params): Promise<void> => {
+  const {eos, mongo, io} = app;
+  const {username, status} = params;
+  const player = await eos.findPlayer(username);
 
-  //mongo.getSocketIds();
+  if (!player) { return; }
 
-  socketIds.forEach((id) => {
-    io.to(id).emit("updateFriendRes", {username, socketId, status});
+  const socket_ids = await mongo.getSocketIds(player.social.friends);
+
+  socket_ids?.forEach((socket_id) => {
+    io.to(socket_id).emit("updateFriend", {username, status});
   });
 };
 

@@ -2,15 +2,15 @@ import {socialStore} from "stores/view";
 
 interface Params {
   username: string;
-  avatarId: number;
+  avatar_id: number;
 }
 
 const setAvatarReceiver = (params: Params): void => {
-  const {username, avatarId} = params;
+  const {username, avatar_id} = params;
 
   socialStore.update((store) => {
     const friend = store.friends.find((friend) => friend.username === username);
-    friend.avatarId = avatarId;
+    friend.avatar_id = avatar_id;
     return store;
   });
 };

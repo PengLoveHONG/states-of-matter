@@ -9,7 +9,7 @@
     const {public_key, private_key} = $playerStore;
     const signature = eccService.sign(`joinlobby:${lobby_id}`, private_key);
 
-    socketService.emit("joinLobbyReq", {lobby_id, public_key, signature});
+    socketService.emit("joinLobby", {lobby_id, public_key, signature});
   };
 </script>
 

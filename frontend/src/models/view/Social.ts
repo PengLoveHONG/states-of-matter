@@ -6,18 +6,16 @@ interface Message {
 
 interface Friend {
   username: string;
-  socketId: string;
-  avatarId: number;
+  avatar_id: number;
   status: number;
   messages: Array<Message>;
 }
 
 interface Chat {
   username: string;
-  socketId: string;
-  avatarId: number;
+  avatar_id: number;
   status: number;
-  isOpen: boolean;
+  is_open: boolean;
   messages: Array<Message>;
 }
 

@@ -9,7 +9,6 @@ const playerStore: Writable<Player> = writable({
   private_key: "",
   private_key_hash: "",
   account: {
-    socket_id: "",
     status: 0,
     xp: 0,
     lv: 1,

@@ -6,14 +6,10 @@
 
   const onUnfriend = (): void => {
     const friendname = $modalStore.data.username;
-    const friendSocketId = $modalStore.data.socketId;
     const {username, public_key, private_key} = $playerStore;
     const signature = eccService.sign(`unfriend:${friendname}`, private_key);
 
-    socketService.emit(
-      "unfriendReq",
-      {username, friendname, friendSocketId, public_key, signature}
-    );
+    socketService.emit("unfriend", {username, friendname, public_key, signature});
   };
 </script>
 

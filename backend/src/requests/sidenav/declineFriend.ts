@@ -9,13 +9,9 @@ interface Params {
 const declineFriend = async (app: App, params: Params): Promise<void> => {
   const {eos, socket} = app;
   const {username} = params;
+  const trx = await eos.pushAction("declfriend", params);
 
-  try {
-    await eos.pushAction("declfriend", params);
-    socket.emit("declineFriendRes", {username});
-  } catch (error) {
-    console.error(error);
-  }
+  if (trx) { socket.emit("declineFriend", {username}); }
 };
 
 export default declineFriend;

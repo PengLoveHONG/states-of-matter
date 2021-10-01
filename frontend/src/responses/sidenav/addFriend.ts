@@ -1,12 +1,10 @@
 import {playerStore} from "stores/data";
 
-interface Params { sender: string; }
+interface Params { username: string; }
 
 const addFriend = (params: Params): void => {
-  const {sender} = params;
-
   playerStore.update((player) => {
-    player.social.requests.push(sender);
+    player.social.requests.push(params.username);
     return player;
   });
 };

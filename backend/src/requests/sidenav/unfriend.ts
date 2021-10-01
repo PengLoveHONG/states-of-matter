@@ -3,25 +3,30 @@ import type {App} from "../../models/App";
 interface Params {
   username: string;
   friendname: string;
-  friendSocketId: string;
   public_key: string;
   signature: string;
 }
 
 const unfriend = async (app: App, params: Params): Promise<void> => {
   const {eos, socket, io, mongo} = app;
-  const {username, friendname, friendSocketId, public_key, signature} = params;
+  const {username, friendname, public_key, signature} = params;
 
-  try {
-    await eos.pushAction("unfriend", {friendname, public_key, signature});
-    await mongo.deleteChat(username, friendname);
-    socket.emit("unfriendSenderRes", {friendname});
+  const trx = await eos.pushAction("unfriend", {friendname, public_key, signature});
 
-    if (friendSocketId) {
-      io.to(friendSocketId).emit("unfriendReceiverRes", {username});
-    }
-  } catch (error) {
-    console.error(error);
+  if (!trx) { return; }
+
+  const del = await mongo.deleteChat(username, friendname);
+
+  if (!del) { return; }
+
+  const receiver = await mongo.findPlayer(friendname);
+
+  if (!receiver) { return; }
+
+  socket.emit("unfriendSender", {friendname});
+
+  if (receiver.socket_id) {
+    io.to(receiver.socket_id).emit("unfriendReceiver", {username});
   }
 };
 

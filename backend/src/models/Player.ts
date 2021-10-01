@@ -16,9 +16,7 @@ interface Deck {
 interface Player {
   username: string;
   public_key: string;
-  private_key_hash: string;
   account: {
-    socket_id: string;
     status: number;
     xp: number;
     lv: number;

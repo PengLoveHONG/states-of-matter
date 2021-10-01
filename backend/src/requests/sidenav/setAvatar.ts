@@ -1,7 +1,6 @@
 import type {App} from "../../models/App";
 
 interface Params {
-  friendIds: Array<string>;
   avatar_id: number;
   username: string;
   public_key: string;
@@ -9,18 +8,21 @@ interface Params {
 }
 
 const setAvatar = async (app: App, params: Params): Promise<void> => {
-  const {eos, io, socket} = app;
-  const {friendIds, avatar_id, username, public_key, signature} = params;
+  const {eos, mongo, io, socket} = app;
+  const {avatar_id, username, public_key, signature} = params;
+  const trx = await eos.pushAction("setavatar", {avatar_id, public_key, signature});
 
-  try {
-    await eos.pushAction("setavatar", {avatar_id, public_key, signature});
-    socket.emit("setAvatarSenderRes", {avatar_id});
+  if (trx) {
+    const player = await eos.findPlayer(username);
 
-    friendIds.forEach((friendId) => {
-      io.to(friendId).emit("setAvatarReceiverRes", {username, avatar_id});
+    if (!player) { return; }
+
+    const socketIds = await mongo.getSocketIds(player.social.friends);
+    socket.emit("setAvatarSender", {avatar_id});
+
+    socketIds?.forEach((id) => {
+      io.to(id).emit("setAvatarReceiver", {username, avatar_id});
     });
-  } catch (error) {
-    console.error(error);
   }
 };
 

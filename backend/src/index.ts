@@ -1,68 +1,46 @@
 import {createServer} from "http";
-import {join} from "path";
 import {Api, JsonRpc} from "eosjs";
-import {JsSignatureProvider} from "eosjs/dist/eosjs-jssig";
-import express from "express";
+import {JsSignatureProvider} from "eosjs/dist/eosjs-jssig.js";
 import {MongoClient} from "mongodb";
 import fetch from "node-fetch";
 import {Server} from "socket.io";
-import settings from "./settings";
-import requests from "./requests";
-import {Eos, Mongo} from "./services";
+import settings from "./settings.js";
+import requests from "./requests/index.js";
+import {Eos, Mongo} from "./services/index.js";
 
 import type {App} from "./models/App";
 
-const init = async (): Promise<void> => {
-  const {uri} = settings.mongo;
-  const {endpoint, contractKey} = settings.eos;
-  const {opts} = settings.socket;
+const {
+  mongo: {uri},
+  eos: {endpoint, contractKey},
+  socket: {opts},
+  server: {port}
+} = settings;
 
-  const app = express();
-  const server = createServer(app);
-  const io = new Server(server, opts);
+const server = createServer();
+const io = new Server(server, opts);
 
-  let mongoClient;
+const mongoClient = await MongoClient.connect(uri);
+const mongoDb = mongoClient.db("som");
 
-  try {
-    mongoClient = await MongoClient.connect(uri);
-  } catch (error) {
-    console.error(error);
-  }
+const rpc = new JsonRpc(endpoint, {fetch});
+const signatureProvider = new JsSignatureProvider([contractKey]);
+const textDecoder = new TextDecoder();
+const textEncoder = new TextEncoder();
+const api = new Api({rpc, signatureProvider, textDecoder, textEncoder});
 
-  if (!mongoClient) { return; }
+const requestKeys = Object.keys(requests) as Array<keyof typeof requests>;
 
-  const mongoDb = mongoClient.db("som");
+io.on("connection", (socket) => {
+  const eos = new Eos(api, socket);
+  const mongo = new Mongo(mongoDb, socket);
+  const app: App = {eos, mongo, io, socket};
 
-  const rpc = new JsonRpc(endpoint, {fetch});
-  const signatureProvider = new JsSignatureProvider([contractKey]);
-  const textDecoder = new TextDecoder();
-  const textEncoder = new TextEncoder();
-  const api = new Api({rpc, signatureProvider, textDecoder, textEncoder});
-
-  const mongo = new Mongo(mongoDb);
-
-  const requestKeys = Object.keys(requests) as Array<keyof typeof requests>;
-
-  app.use("/", express.static(join(process.cwd(), "../frontend/dist")));
-  app.get("/", (req, res) => {
-    res.sendFile(join(process.cwd(), "../frontend/dist/index.html"));
-  });
-  app.get("*", (req, res) => {
-    res.sendFile(join(process.cwd(), "../frontend/dist/index.html"));
-  });
-
-  server.listen(process.env.PORT || 4200);
-
-  io.on("connection", (socket) => {
-    const eos = new Eos(api, socket);
-    const app: App = {eos, mongo, io, socket};
-
-    requestKeys.forEach((request) => {
-      socket.on(`${request}Req`, (params = {}) => {
-        requests[request](app, params);
-      });
+  requestKeys.forEach((request) => {
+    socket.on(request, (params: any = {}) => {
+      requests[request](app, params);
     });
   });
-};
+});
 
-init();
+server.listen(port);

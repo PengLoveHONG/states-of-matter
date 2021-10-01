@@ -11,8 +11,7 @@ const exitGameSender = (params: Params): void => {
     return store;
   });
 
-  socketService.emit("updateFriendReq", {
-    socketIds: miscService.getSocketIds(),
+  socketService.emit("updateFriend", {
     username: get(playerStore).username,
     status: status.ONLINE
   });

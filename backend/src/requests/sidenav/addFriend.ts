@@ -1,20 +1,27 @@
 import type {App} from "../../models/App";
 
 interface Params {
+  username: string;
   friendname: string;
   public_key: string;
   signature: string;
 }
 
 const addFriend = async (app: App, params: Params): Promise<void> => {
-  const {eos, socket} = app;
+  const {eos, mongo, io, socket} = app;
+  const {username, friendname, public_key, signature} = params;
+  const trx = await eos.pushAction("addfriend", {friendname, public_key, signature});
 
-  try {
-    await eos.pushAction("addfriend", params);
+  if (!trx) { return; }
 
-    socket.emit("notificationRes", {msg: "Friend request sent."});
-  } catch (error) {
-    console.error(error);
+  const friend = await mongo.findPlayer(friendname);
+
+  if (!friend) { return; }
+
+  socket.emit("notification", {msg: "Friend request sent."});
+
+  if (friend.socket_id) {
+    io.to(friend.socket_id).emit("addFriend", {username});
   }
 };
 

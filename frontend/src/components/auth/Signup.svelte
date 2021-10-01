@@ -6,15 +6,12 @@
   const dispatch = createEventDispatcher();
 
   const onSignup = async (): Promise<void> => {
+    const {username, password} = $authStore.signupForm;
     const private_key = await eccService.randomKey();
     const public_key = eccService.toPublic(private_key);
-    const private_key_hash = cryptoService.encrypt(private_key, $authStore.signupForm.password);
+    const private_key_hash = cryptoService.encrypt(private_key, password);
 
-    socketService.emit("signupReq", {
-      username: $authStore.signupForm.username,
-      public_key,
-      private_key_hash
-    });
+    socketService.emit("signup", {username, public_key, private_key_hash});
   };
 
   const onGotoSignin = (): void => { dispatch("gotoSignin"); };

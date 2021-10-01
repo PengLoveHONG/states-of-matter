@@ -11,7 +11,7 @@
     const {public_key, private_key} = $playerStore;
     const signature = eccService.sign(`setdeckname:${name}`, private_key);
 
-    socketService.emit("setDeckNameReq", {id, name, public_key, signature});
+    socketService.emit("setDeckName", {id, name, public_key, signature});
   };
 </script>
 

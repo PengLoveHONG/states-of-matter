@@ -7,18 +7,17 @@ interface Params {
 }
 
 const closeLobby = async (app: App, params: Params): Promise<void> => {
-  const {eos, io, socket} = app;
-  const {lobby_id} = params;
+  const {eos, mongo, io, socket} = app;
+  const lobby = await eos.findLobby(params.lobby_id);
+  const trx = await eos.pushAction("destroylobby", params);
 
-  try {
-    const lobby = await eos.findLobby(lobby_id);
+  if (lobby && trx) {
+    const challengee = await mongo.findPlayer(lobby.challengee.username);
 
-    await eos.pushAction("destroylobby", params);
+    if (!challengee) { return; }
 
-    socket.emit("closeLobbySenderRes");
-    io.to(lobby.challengee.socket_id).emit("closeLobbyReceiverRes");
-  } catch (error) {
-    console.error(error);
+    socket.emit("closeLobbySender");
+    io.to(challengee.socket_id).emit("closeLobbyReceiver");
   }
 };
 

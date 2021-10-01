@@ -17,7 +17,7 @@ const createLobby = (params: Params): void => {
     return store;
   });
 
-  socketService.emit("updateFriendReq", {
+  socketService.emit("updateFriend", {
     socketIds: miscService.getSocketIds(),
     username: player.username,
     socketId: player.account.socket_id,

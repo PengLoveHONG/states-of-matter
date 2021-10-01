@@ -9,7 +9,7 @@
     const cards = $deckStore.cards.map(({id, amount}) => ({id, amount}));
     const signature = eccService.sign(`savedeck:${cards.length}`, private_key);
 
-    socketService.emit("saveDeckReq", {cards, public_key, signature});
+    socketService.emit("saveDeck", {cards, public_key, signature});
   };
 
   const removeFromDeck = (event): void => {

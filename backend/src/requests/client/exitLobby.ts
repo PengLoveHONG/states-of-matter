@@ -7,18 +7,18 @@ interface Params {
 }
 
 const exitLobby = async (app: App, params: Params): Promise<void> => {
-  const {eos, io, socket} = app;
+  const {eos, mongo, io, socket} = app;
   const {lobby_id} = params;
+  const trx = await eos.pushAction("leavelobby", params);
+  const lobby = await eos.findLobby(lobby_id);
 
-  try {
-    await eos.pushAction("leavelobby", params);
+  if (trx && lobby) {
+    const host = await mongo.findPlayer(lobby.host.username);
 
-    const lobby = await eos.findLobby(lobby_id);
+    if (!host) { return; }
 
-    socket.emit("exitLobbySenderRes");
-    io.to(lobby.host.socket_id).emit("exitLobbyReceiverRes");
-  } catch (error) {
-    console.error(error);
+    socket.emit("exitLobbySender");
+    io.to(host.socket_id).emit("exitLobbyReceiver");
   }
 };
 

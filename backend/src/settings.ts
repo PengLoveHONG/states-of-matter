@@ -6,7 +6,7 @@ const settings = {
   },
   eos: {
     endpoint: "https://testnet.telos.net",
-    contractAccount: "telosgamesbp",
+    contractAccount: process.env.CONTRACT_ACCOUNT || "telosgamesbp",
     contractKey: process.env.CONTRACT_KEY || "5K2rKojEWKC1UmmiyWKvvXcVeS1Devq2LQEgDyKejyFNJAX2AX2"
   },
   socket: {
@@ -14,7 +14,9 @@ const settings = {
       cors: {origin: "*"}
     }
   },
-  port: process.env.PORT || 4200
+  server: {
+    port: process.env.PORT || 4200
+  }
 };
 
 export default settings;

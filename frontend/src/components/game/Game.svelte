@@ -12,7 +12,7 @@
     const {game_id} = $gameStore;
     const signature = eccService.sign(`endgame:${game_id}`, private_key);
 
-    socketService.emit("exitGameReq", {game_id, public_key, signature});
+    socketService.emit("exitGame", {game_id, public_key, signature});
   };
 </script>
 

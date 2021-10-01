@@ -9,7 +9,7 @@
     const {public_key, private_key} = $playerStore;
     const signature = eccService.sign(`setdeckklass:${klass}`, private_key);
 
-    socketService.emit("setDeckKlassReq", {id, klass, public_key, signature});
+    socketService.emit("setDeckKlass", {id, klass, public_key, signature});
   };
 </script>
 

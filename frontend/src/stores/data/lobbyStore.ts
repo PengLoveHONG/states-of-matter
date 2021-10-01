@@ -7,12 +7,10 @@ const lobbyStore: Writable<Lobby> = writable({
   lobby_id: 0,
   host: {
     username: "",
-    socket_id: "",
     avatar_id: 0
   },
   challengee: {
     username: "",
-    socket_id: "",
     avatar_id: 0
   }
 });

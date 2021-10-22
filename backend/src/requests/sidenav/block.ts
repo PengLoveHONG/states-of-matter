@@ -8,25 +8,28 @@ interface Params {
 }
 
 const block = async (app: App, params: Params): Promise<void> => {
-  const {eos, socket, io, mongo} = app;
+  const {eos, io, mongo} = app;
   const {username, friendname, public_key, signature} = params;
-  const trx = await eos.pushAction("blockfriend", {friendname, public_key, signature});
 
-  if (!trx) { return; }
+  const transaction = await eos.pushAction("blockfriend", {
+    friendname,
+    public_key,
+    signature
+  });
 
-  const del = await mongo.deleteChat(username, friendname);
+  if (!transaction) { return; }
 
-  if (del) {
-    const receiver = await mongo.findPlayer(friendname);
+  const deleted = await mongo.deleteChat(username, friendname);
 
-    if (!receiver) { return; }
+  if (!deleted) { return; }
 
-    socket.emit("blockSender", {friendname});
+  io.emit("blockSender", {friendname});
+  const receiver = await mongo.findPlayer({username: friendname});
 
-    if (receiver.socket_id) {
-      io.to(receiver.socket_id).emit("blockReceiver", {username});
-    }
-  }
+  if (!receiver || !receiver.socket_id) { return; }
+
+  const {socket_id} = receiver;
+  io.emitTo(socket_id, "blockReceiver", {username});
 };
 
 export default block;

@@ -1,17 +1,21 @@
-import type {App} from "../../models/App";
+import type {App} from "../../models/App"
 
-interface Params {username: string;}
+interface Params {
+  username: string;
+}
 
 const getPrivateKeyHash = async (app: App, params: Params): Promise<void> => {
-  const {mongo, socket} = app;
-  const player = await mongo.findPlayer(params.username);
+  const {io, mongo} = app;
+  const {username} = params;
+  const player = await mongo.findPlayer({username});
 
-  if (player) {
-    const {private_key_hash} = player;
-    socket.emit("getPrivateKeyHash", {private_key_hash});
-  } else {
-    socket.emit("notification", {msg: "Username not found."});
+  if (!player) {
+    io.notification("Username not found.");
+    return;
   }
+
+  const {private_key_hash} = player;
+  io.emit("getPrivateKeyHash", {private_key_hash});
 };
 
 export default getPrivateKeyHash;

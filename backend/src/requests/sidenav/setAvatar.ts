@@ -8,22 +8,22 @@ interface Params {
 }
 
 const setAvatar = async (app: App, params: Params): Promise<void> => {
-  const {eos, mongo, io, socket} = app;
+  const {eos, io, mongo} = app;
   const {avatar_id, username, public_key, signature} = params;
-  const trx = await eos.pushAction("setavatar", {avatar_id, public_key, signature});
 
-  if (trx) {
-    const player = await eos.findPlayer(username);
+  const [trx, player] = await Promise.all([
+    eos.pushAction("setavatar", {avatar_id, public_key, signature}),
+    eos.findPlayer(username)
+  ]);
 
-    if (!player) { return; }
+  if (!trx || !player) { return; }
 
-    const socketIds = await mongo.getSocketIds(player.social.friends);
-    socket.emit("setAvatarSender", {avatar_id});
+  io.emit("setAvatarSender", {avatar_id});
+  const socket_ids = await mongo.getSocketIds(player.social.friends);
 
-    socketIds?.forEach((id) => {
-      io.to(id).emit("setAvatarReceiver", {username, avatar_id});
-    });
-  }
+  if (!socket_ids) { return; }
+
+  io.emitTo(socket_ids, "setAvatarReceiver", {username, avatar_id});
 };
 
 export default setAvatar;

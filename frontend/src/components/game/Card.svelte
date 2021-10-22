@@ -1,9 +1,14 @@
-<script>
-  import {onMount} from "svelte";
+<script lang="ts">
+  import {getContext, onMount} from "svelte";
+  import type { Writable } from "svelte/store";
 
-  let klass;
+  let selectedCard: Writable<{gid: number; id: number}> = getContext("selectedCard");
 
-  export let card = {};
+  const selectCard = (): void => {
+    selectedCard.set({gid: card.gid, id: card.id});
+  };
+
+  export let card: any = {};
 </script>
 
 <style>
@@ -146,7 +151,7 @@
   }
 </style>
 
-<div class="scene">
+<div class="scene" on:click={selectCard}>
   <div class="card">
 
     <div class="card__front">

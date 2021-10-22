@@ -32,8 +32,8 @@
 
   const onSendMessage = (): void => {
     if (text) {
-      const sender = {username: $playerStore.username};
-      const receiver = {username: $socialStore.chat.username};
+      const sender = $playerStore.username;
+      const receiver = $socialStore.chat.username;
       const date = new Date();
 
       socketService.emit("sendChatMsg", {sender, receiver, text, date});

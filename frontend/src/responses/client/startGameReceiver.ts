@@ -3,22 +3,18 @@ import {status} from "models/data/Player";
 import {socketService} from "services";
 import {gameStore, playerStore} from "stores/data";
 
-const startGameReceiver = (params): void => {
-  playerStore.update((store) => {
-    store.account.status = status.INGAME;
-    return store;
+interface Params { game: any; }
+
+const startGameReceiver = (params: Params): void => {
+  const {username} = get(playerStore);
+
+  playerStore.update((player) => {
+    player.account.status = status.INGAME;
+    return player;
   });
 
   gameStore.set(params.game);
-  // gameStore.update((store) => {
-  //   store.player_b = get(playerStore).username;
-  //   return store;
-  // });
-
-  socketService.emit("updateFriend", {
-    username: get(playerStore).username,
-    status: status.INGAME
-  });
+  socketService.emit("updateFriend", {username});
 };
 
 export default startGameReceiver;

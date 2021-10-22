@@ -6,13 +6,13 @@ import sendChatMsgSender from "./sendChatMsgSender";
 import getPrivateKeyHash from "./auth/getPrivateKeyHash";
 import signin from "./auth/signin";
 // Client
-import closeLobbyReceiver from "./client/closeLobbyReceiver";
-import closeLobbySender from "./client/closeLobbySender";
-import createLobby from "./client/createLobby";
-import exitLobbyReceiver from "./client/exitLobbyReceiver";
-import exitLobbySender from "./client/exitLobbySender";
+import destroyLobbyReceiver from "./client/destroyLobbyReceiver";
+import destroyLobbySender from "./client/destroyLobbySender";
 import joinLobbyReceiver from "./client/joinLobbyReceiver";
 import joinLobbySender from "./client/joinLobbySender";
+import leaveLobbyReceiver from "./client/leaveLobbyReceiver";
+import leaveLobbySender from "./client/leaveLobbySender";
+import makeLobby from "./client/makeLobby";
 import saveDeck from "./client/saveDeck";
 import selectDeck from "./client/selectDeck";
 import setDeckKlass from "./client/setDeckKlass";
@@ -45,17 +45,17 @@ const responses = {
   getPrivateKeyHash,
   signin,
   // Client
-  setDeckName,
-  closeLobbyReceiver,
-  closeLobbySender,
-  createLobby,
-  exitLobbyReceiver,
-  exitLobbySender,
+  destroyLobbyReceiver,
+  destroyLobbySender,
   joinLobbyReceiver,
   joinLobbySender,
+  leaveLobbyReceiver,
+  leaveLobbySender,
+  makeLobby,
   saveDeck,
   selectDeck,
   setDeckKlass,
+  setDeckName,
   startGameReceiver,
   startGameSender,
   // Game

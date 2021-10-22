@@ -8,11 +8,14 @@ interface Params {
 }
 
 const saveDeck = async (app: App, params: Params): Promise<void> => {
-  const {eos, socket} = app;
+  const {eos, io} = app;
   const {cards} = params;
+
   const trx = await eos.pushAction("savedeck", params);
 
-  if (trx) { socket.emit("saveDeck", {cards}); }
+  if (!trx) { return; }
+
+  io.emit("saveDeck", {cards});
 };
 
 export default saveDeck;

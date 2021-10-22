@@ -8,21 +8,25 @@ interface Params {
 }
 
 const addFriend = async (app: App, params: Params): Promise<void> => {
-  const {eos, mongo, io, socket} = app;
+  const {eos, io, mongo} = app;
   const {username, friendname, public_key, signature} = params;
-  const trx = await eos.pushAction("addfriend", {friendname, public_key, signature});
 
-  if (!trx) { return; }
+  const transaction = await eos.pushAction("addfriend", {
+    friendname,
+    public_key,
+    signature
+  });
 
-  const friend = await mongo.findPlayer(friendname);
+  if (!transaction) { return; }
 
-  if (!friend) { return; }
+  io.notification("Friend request sent.");
 
-  socket.emit("notification", {msg: "Friend request sent."});
+  const friend = await mongo.findPlayer({username: friendname});
 
-  if (friend.socket_id) {
-    io.to(friend.socket_id).emit("addFriend", {username});
-  }
+  if (!friend || !friend.socket_id) { return; }
+
+  const {socket_id} = friend;
+  io.emitTo(socket_id, "addFriend", {username});
 };
 
 export default addFriend;

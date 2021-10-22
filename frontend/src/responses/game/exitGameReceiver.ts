@@ -1,20 +1,19 @@
 import {get} from "svelte/store";
-import { status } from "models/data/Player";
-import {miscService, socketService} from "services";
+import {status} from "models/data/Player";
+import {socketService} from "services";
 import {playerStore} from "stores/data";
 
 interface Params {}
 
 const exitGameReceiver = (params: Params): void => {
-  playerStore.update((store) => {
-    store.account.status = status.ONLINE;
-    return store;
+  const {username} = get(playerStore);
+
+  playerStore.update((player) => {
+    player.account.status = status.ONLINE;
+    return player;
   });
 
-  socketService.emit("updateFriend", {
-    username: get(playerStore).username,
-    status: status.ONLINE
-  });
+  socketService.emit("updateFriend", {username});
 };
 
 export default exitGameReceiver;

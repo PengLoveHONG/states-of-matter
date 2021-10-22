@@ -1,4 +1,4 @@
-import cards from "./cards";
+import cards, {cardz} from "./cards";
 import heroes from "./heroes";
 
-export {cards, heroes};
+export {cards, cardz, heroes};

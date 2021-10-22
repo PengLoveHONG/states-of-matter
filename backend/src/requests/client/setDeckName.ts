@@ -8,11 +8,14 @@ interface Params {
 }
 
 const setDeckName = async (app: App, params: Params): Promise<void> => {
-  const {eos, socket} = app;
+  const {eos, io} = app;
   const {id, name} = params;
-  const trx = await eos.pushAction("setdeckname", params);
 
-  if (trx) { socket.emit("setDeckName", {id, name}); }
+  const transaction = await eos.pushAction("setdeckname", params);
+
+  if (!transaction) { return; }
+
+  io.emit("setDeckName", {id, name});
 };
 
 export default setDeckName;

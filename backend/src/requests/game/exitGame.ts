@@ -7,19 +7,25 @@ interface Params {
 }
 
 const exitGame = async (app: App, params: Params): Promise<void> => {
-  const {eos, mongo, io, socket} = app;
+  const {eos, io, mongo} = app;
   const {game_id} = params;
+
   const game = await eos.findGame(game_id);
+
+  if (!game) { return; }
+
   const trx = await eos.pushAction("endgame", params);
 
-  if (game && trx) {
-    const challengee = await mongo.findPlayer(game.player_b);
+  if (!trx) { return; }
 
-    if (!challengee) { return; }
+  io.emit("exitGameSender");
 
-    socket.emit("exitGameSender");
-    io.to(challengee.socket_id).emit("exitGameReceiver");
-  }
+  const {username} = game.player_b;
+  const challengee = await mongo.findPlayer({username});
+
+  if (!challengee || !challengee.socket_id) { return; }
+
+  io.emitTo(challengee.socket_id, "exitGameReceiver");
 };
 
 export default exitGame;

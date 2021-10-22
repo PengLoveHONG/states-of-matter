@@ -7,11 +7,14 @@ interface Params {
 }
 
 const selectDeck = async (app: App, params: Params): Promise<void> => {
-  const {eos, socket} = app;
+  const {eos, io} = app;
   const {deck_id} = params;
+
   const trx = await eos.pushAction("selectdeck", params);
 
-  if (trx) { socket.emit("selectDeck", {deck_id}); }
+  if (!trx) { return; }
+
+  io.emit("selectDeck", {deck_id});
 };
 
 export default selectDeck;

@@ -8,7 +8,7 @@ interface Params {
 }
 
 const acceptFriend = async (app: App, params: Params): Promise<void> => {
-  const {eos, mongo, io, socket} = app;
+  const {eos, io, mongo} = app;
   const {friendname, username, public_key, signature} = params;
 
   const trx = await eos.pushAction("acceptfriend", {friendname, public_key, signature});
@@ -18,21 +18,21 @@ const acceptFriend = async (app: App, params: Params): Promise<void> => {
   const [sender, receiver, receiverMongo, inserted] = await Promise.all([
     eos.findPlayer(params.username),
     eos.findPlayer(params.friendname),
-    mongo.findPlayer(params.friendname),
+    mongo.findPlayer({username: params.friendname}),
     mongo.insertChat(username, friendname)
   ]);
 
   if (!sender || !receiver || !receiverMongo || !inserted) { return; }
 
-  socket.emit("acceptFriendSender", {
+  io.emit("acceptFriendSender", {
     username: params.friendname,
-    avatarId: receiver.account.avatar_id,
+    avatar_id: receiver.account.avatar_id,
     status: receiver.account.status
   });
 
-  io.to(receiverMongo.socket_id).emit("acceptFriendReceiver", {
+  io.emitTo(receiverMongo.socket_id, "acceptFriendReceiver", {
     username: params.username,
-    avatarId: sender.account.avatar_id,
+    avatar_id: sender.account.avatar_id,
     status: sender.account.status
   });
 };

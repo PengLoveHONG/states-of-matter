@@ -7,11 +7,14 @@ interface Params {
 }
 
 const unblock = async (app: App, params: Params): Promise<void> => {
-  const {eos, socket} = app;
+  const {eos, io} = app;
   const {friendname} = params;
-  const trx = await eos.pushAction("unblckfriend", params);
 
-  if (trx) { socket.emit("unblock", {friendname}); }
+  const transaction = await eos.pushAction("unblckfriend", params);
+
+  if (!transaction) { return; }
+
+  io.emit("unblock", {friendname});
 };
 
 export default unblock;

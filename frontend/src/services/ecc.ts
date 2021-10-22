@@ -8,11 +8,7 @@ class EccService {
   }
 
   async randomKey (): Promise<string> {
-    try {
-      return await this._ecc.randomKey();
-    } catch (error) {
-      console.error(error);
-    }
+    return await this._ecc.randomKey();
   }
 
   sign (data: string, private_key: string): string {

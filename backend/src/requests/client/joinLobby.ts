@@ -7,20 +7,28 @@ interface Params {
 }
 
 const joinLobby = async (app: App, params: Params): Promise<void> => {
-  const {eos, mongo, io, socket} = app;
+  const {eos, io, mongo} = app;
   const {lobby_id} = params;
+
   const trx = await eos.pushAction("joinlobby", params);
+
+  if (!trx) { return; }
+
   const lobby = await eos.findLobby(lobby_id);
 
-  if (trx && lobby) {
-    const {challengee} = lobby;
-    const host = await mongo.findPlayer(lobby.host.username);
+  if (!lobby) { return; }
 
-    if (!host) { return; }
+  io.emit("joinLobbySender", {lobby});
 
-    socket.emit("joinLobbySender", {lobby});
-    io.to(host.socket_id).emit("joinLobbyReceiver", {challengee});
-  }
+  const {username} = lobby.host;
+  const host = await mongo.findPlayer({username});
+
+  if (!host || !host.socket_id) { return; }
+
+  const {challengee} = lobby;
+  const {socket_id} = host;
+
+  io.emitTo(socket_id, "joinLobbyReceiver", {challengee});
 };
 
 export default joinLobby;

@@ -3,13 +3,12 @@ import {socialStore} from "stores/view";
 
 interface Params {
   username: string;
-  socketId: string;
-  avatarId: number;
+  avatar_id: number;
   status: number;
 }
 
 const acceptFriendReceiver = (params: Params): void => {
-  const {username, socketId, avatarId, status} = params;
+  const {username, avatar_id, status} = params;
 
   playerStore.update((store) => {
     store.social.friends.push(username);
@@ -17,14 +16,7 @@ const acceptFriendReceiver = (params: Params): void => {
   });
 
   socialStore.update((store) => {
-    store.friends.push({
-      username,
-      status,
-      socketId,
-      avatarId,
-      messages: []
-    });
-
+    store.friends.push({username, status, avatar_id, messages: []});
     return store;
   });
 };

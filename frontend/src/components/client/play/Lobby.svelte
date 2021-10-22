@@ -10,20 +10,20 @@
     socketService.emit("startGame", {lobby_id, public_key, signature});
   };
 
-  const close = (): void => {
-    const {public_key, private_key} = $playerStore;
+  const onDestroyLobby = (): void => {
     const {lobby_id} = $lobbyStore;
-    const signature = eccService.sign(`destroylobby:${lobby_id}`, private_key);
+    const {username, public_key, private_key} = $playerStore;
+    const signature = eccService.sign(`destroylobby:${username}`, private_key);
 
-    socketService.emit("closeLobby", {lobby_id, public_key, signature});
+    socketService.emit("destroyLobby", {lobby_id, public_key, signature});
   };
 
-  const exit = (): void => {
-    const {public_key, private_key} = $playerStore;
+  const onLeaveLobby = (): void => {
     const {lobby_id} = $lobbyStore;
-    const signature = eccService.sign(`leavelobby:${lobby_id}`, private_key);
+    const {username, public_key, private_key} = $playerStore;
+    const signature = eccService.sign(`leavelobby:${username}`, private_key);
 
-    socketService.emit("exitLobby", {lobby_id, public_key, signature});
+    socketService.emit("leaveLobby", {lobby_id, public_key, signature});
   };
 </script>
 
@@ -108,10 +108,10 @@
 
   <div>
     {#if $lobbyStore.host.username === $playerStore.username}
-      <button class="btn--raised-primary" on:click={start}>START</button>
-      <button class="btn--raised-primary" on:click={close}>CLOSE</button>
+      <button class="btn--raised-primary" disabled={$lobbyStore.challengee.username === ""} on:click={start}>START GAME</button>
+      <button class="btn--raised-primary" on:click={onDestroyLobby}>DESTROY LOBBY</button>
     {:else}
-      <button class="btn--basic-primary" on:click={exit}>EXIT</button>
+      <button class="btn--basic-primary" on:click={onLeaveLobby}>LEAVE LOBBY</button>
     {/if}
   </div>
 

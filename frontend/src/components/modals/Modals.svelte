@@ -3,7 +3,7 @@
   import Block from "./Block.svelte";
   import ChangeDeckName from "./ChangeDeckName.svelte";
   import Gift from "./Gift.svelte";
-  import JoinCustom from "./JoinCustom.svelte";
+  import JoinLobby from "./JoinLobby.svelte";
   import SetDeckKlass from "./SetDeckKlass.svelte";
   import Tip from "./Tip.svelte";
   import Unfriend from "./Unfriend.svelte";
@@ -27,8 +27,8 @@
   <Gift/>
 {/if}
 
-{#if $modal.list.joinCustom}
-  <JoinCustom/>
+{#if $modal.list.joinLobby}
+  <JoinLobby/>
 {/if}
 
 {#if $modal.list.setDeckKlass}

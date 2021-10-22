@@ -2,26 +2,23 @@
   import {eccService, miscService, socketService} from "services";
   import {playerStore} from "stores/data";
 
-  const create = (): void => {
-    const {public_key, private_key} = $playerStore;
-    const lobby_id = Math.floor(Math.random() * 1000000000);
-    const signature = eccService.sign(`makelobby:${lobby_id}`, private_key);
+  const onMakeLobby = (): void => {
+    const {username, public_key, private_key} = $playerStore;
+    const signature = eccService.sign(`makelobby:${username}`, private_key);
 
-    socketService.emit("createLobby", {lobby_id, public_key, signature});
+    socketService.emit("makeLobby", {public_key, signature});
   };
 
-  const join = (): void => {
-    miscService.openModal("joinCustom");
-  };
+  const onJoinLobby = (): void => { miscService.openModal("joinLobby"); };
 </script>
 
 <style>
-  .play {
+  .play-screens {
     display: flex;
     height: 100%;
     width: 100%;
   }
-  .play__screen {
+  .play-screen {
     flex-basis: 33.3333%;
     display: flex;
     flex-direction: column;
@@ -46,25 +43,27 @@
   }
 </style>
 
-<div class="play">
-  <div class="play__screen casual">
+<div class="play-screens">
+
+  <div class="play-screen casual">
     <h1>CASUAL</h1>
     <p>Play for fun</p>
     <p>Casual coming soon... 😉</p>
   </div>
 
-  <div class="play__screen ranked">
+  <div class="play-screen ranked">
     <h1>RANKED</h1>
     <p>Rank up and earn SOM rewards</p>
     <p>Ranked coming soon... 😉</p>
   </div>
 
-  <div class="play__screen custom">
+  <div class="play-screen custom">
     <h1>CUSTOM</h1>
     <p>Challenge your friends</p>
     <div>
-      <button class="btn--raised-accent" on:click={create}>CREATE</button>
-      <button class="btn--basic-accent" on:click={join}>JOIN</button>
+      <button class="btn--raised-accent" on:click={onMakeLobby}>MAKE</button>
+      <button class="btn--basic-accent" on:click={onJoinLobby}>JOIN</button>
     </div>
   </div>
+
 </div>

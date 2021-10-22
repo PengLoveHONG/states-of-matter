@@ -1,10 +1,9 @@
 import {lobbyStore} from "stores/data";
 
-const exitLobbyReceiver = (): void => {
+const leaveLobbyReceiver = (): void => {
   lobbyStore.update((store) => {
     store.challengee = {
       username: "",
-      socket_id: "",
       avatar_id: 0
     };
 
@@ -12,4 +11,4 @@ const exitLobbyReceiver = (): void => {
   });
 };
 
-export default exitLobbyReceiver;
+export default leaveLobbyReceiver;

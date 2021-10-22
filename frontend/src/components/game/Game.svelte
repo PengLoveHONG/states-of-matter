@@ -1,11 +1,23 @@
 <script lang="ts">
-  import Fields from "./fields/Fields.svelte";
-  import HandCards from "./hand-cards/HandCards.svelte";
+  import {onMount, setContext} from "svelte";
+  import {writable} from "svelte/store";
   import Deck from "./Deck.svelte";
   import Graveyard from "./Graveyard.svelte";
-  import Hero from "./Hero.svelte";
+  import OpponentFields from "./opponent/OpponentFields.svelte";
+  import OpponentHandCards from "./opponent/OpponentHandCards.svelte";
+  import PlayerFields from "./player/PlayerFields.svelte";
+  import PlayerHandCards from "./player/PlayerHandCards.svelte";
   import {eccService, socketService} from "services";
-  import {gameStore, lobbyStore, playerStore} from "stores/data";
+  import {gameStore, playerStore} from "stores/data";
+
+  let selectedCard = writable({
+    gid: 0,
+    id: 0
+  });
+
+  let currentPlayer: string;
+
+  setContext("selectedCard", selectedCard);
 
   const exit = (): void => {
     const {public_key, private_key} = $playerStore;
@@ -14,6 +26,10 @@
 
     socketService.emit("exitGame", {game_id, public_key, signature});
   };
+
+  onMount(() => {
+    currentPlayer = $gameStore.player_a.username === $playerStore.username ? "player_a" : "player_b";
+  });
 </script>
 
 <style>
@@ -34,8 +50,6 @@
   .player__right {
     display: flex;
     flex-direction: column;
-    /* border: 1px solid rgb(var(--green));
-    box-sizing: border-box; */
   }
   .player__cards {
     display: flex;
@@ -44,31 +58,39 @@
 </style>
 
 <div class="game">
-  {#if $gameStore.player_a === $playerStore.username}
+  {#if $gameStore.player_a.username === $playerStore.username}
     <button class="btn--raised-accent" on:click={exit}>END</button>
   {/if}
   <div class="opponent">
     <p>
-      {$gameStore.player_b}
+      {#if $gameStore.player_a.username !== $playerStore.username}
+        {$gameStore.player_a.username}
+      {:else}
+        {$gameStore.player_b.username}
+      {/if}
     </p>
     <div class="player__right">
       <div class="player__cards">
-        <Graveyard/>
-        <HandCards belongsTo="opponent"/>
         <Deck/>
+        <OpponentHandCards/>
+        <Graveyard/>
       </div>
-      <Fields/>
+      <OpponentFields/>
     </div>
   </div>
   <div class="player">
     <p>
-      {$gameStore.player_a}
+      {#if $gameStore.player_a.username === $playerStore.username}
+        {$gameStore.player_a.username}
+      {:else}
+        {$gameStore.player_b.username}
+      {/if}
     </p>
     <div class="player__right">
-      <Fields/>
+      <PlayerFields/>
       <div class="player__cards">
         <Graveyard/>
-        <HandCards belongsTo="self"/>
+        <PlayerHandCards/>
         <Deck/>
       </div>
     </div>

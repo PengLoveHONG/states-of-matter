@@ -40,6 +40,7 @@
 
   .hero {
     position: relative;
+    background-color: black;
   }
   .hero__main {
     position: relative;

@@ -8,26 +8,28 @@ interface Params {
 }
 
 const unfriend = async (app: App, params: Params): Promise<void> => {
-  const {eos, socket, io, mongo} = app;
+  const {eos, io, mongo} = app;
   const {username, friendname, public_key, signature} = params;
 
-  const trx = await eos.pushAction("unfriend", {friendname, public_key, signature});
+  const transaction = await eos.pushAction("unfriend", {
+    friendname,
+    public_key,
+    signature
+  });
 
-  if (!trx) { return; }
+  if (!transaction) { return; }
 
-  const del = await mongo.deleteChat(username, friendname);
+  const deleted = await mongo.deleteChat(username, friendname);
 
-  if (!del) { return; }
+  if (!deleted) { return; }
 
-  const receiver = await mongo.findPlayer(friendname);
+  io.emit("unfriendSender", {friendname});
+  const receiver = await mongo.findPlayer({username: friendname});
 
-  if (!receiver) { return; }
+  if (!receiver || !receiver.socket_id) { return; }
 
-  socket.emit("unfriendSender", {friendname});
-
-  if (receiver.socket_id) {
-    io.to(receiver.socket_id).emit("unfriendReceiver", {username});
-  }
+  const {socket_id} = receiver;
+  io.emitTo(socket_id, "unfriendReceiver", {username});
 };
 
 export default unfriend;

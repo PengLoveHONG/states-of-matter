@@ -7,20 +7,30 @@ interface Params {
 }
 
 const startGame = async (app: App, params: Params): Promise<void> => {
-  const {eos, mongo, io, socket} = app;
+  const {eos, io, mongo} = app;
   const {lobby_id} = params;
+
   const lobby = await eos.findLobby(lobby_id);
-  const trx = await eos.pushAction("startgame", params);
+
+  if (!lobby) { return; }
+
+  const transaction = await eos.pushAction("startgame", params);
+
+  if (!transaction) { return; }
+
   const game = await eos.findGame(lobby_id);
 
-  if (lobby && trx && game) {
-    const challengee = await mongo.findPlayer(lobby.challengee.username);
+  if (!game) { return; }
 
-    if (!challengee) { return; }
+  io.emit("startGameSender", {game});
 
-    socket.emit("startGameSender", {game});
-    io.to(challengee.socket_id).emit("startGameReceiver", {game});
-  }
+  const {username} = lobby.challengee;
+  const challengee = await mongo.findPlayer({username});
+
+  if (!challengee || !challengee.socket_id) { return; }
+
+  const {socket_id} = challengee;
+  io.emitTo(socket_id, "startGameReceiver", {game});
 };
 
 export default startGame;

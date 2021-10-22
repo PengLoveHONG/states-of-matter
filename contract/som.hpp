@@ -58,8 +58,8 @@ CONTRACT som : public contract {
       uint8_t avatar_id;
     };
 
-    ACTION signin(name username, public_key public_key, signature signature);
-    ACTION signout(name username, public_key public_key, signature signature);
+    ACTION signin(public_key public_key, signature signature);
+    ACTION signout(public_key public_key, signature signature);
     ACTION signup(name username, public_key public_key);
 
     ACTION savedeck(deck_cards_t cards, public_key public_key, signature signature);
@@ -76,15 +76,44 @@ CONTRACT som : public contract {
     ACTION unblckfriend(name friendname, public_key public_key, signature signature);
 
     ACTION makelobby(uint64_t lobby_id, public_key public_key, signature signature);
-    ACTION destroylobby(uint64_t lobby_id, public_key public_key, signature signature);
+    ACTION destroylobby(public_key public_key, signature signature);
     ACTION joinlobby(uint64_t lobby_id, public_key public_key, signature signature);
-    ACTION leavelobby(uint64_t lobby_id, public_key public_key, signature signature);
+    ACTION leavelobby(public_key public_key, signature signature);
     ACTION startgame(uint64_t lobby_id, public_key public_key, signature signature);
     ACTION endgame(uint64_t game_id, public_key public_key, signature signature);
+    ACTION playcard(string field, uint16_t gid, uint16_t id, public_key public_key, signature signature);
 
     ACTION rmplayer(name username);
     ACTION rmlobby(uint64_t lobby_id);
     ACTION rmgame(uint64_t game_id);
+
+    struct hero_t {
+      uint16_t health;
+      uint8_t damage;
+      uint8_t special;
+    };
+    struct game_card_t {
+      uint16_t gid;
+      uint16_t id;
+    };
+    struct fields_t {
+      game_card_t minion_a;
+      game_card_t minion_b;
+      game_card_t minion_c;
+      game_card_t minion_d;
+      game_card_t minion_e;
+      game_card_t magic;
+      game_card_t trap;
+    };
+    typedef vector<game_card_t> game_cards_t;
+    struct game_player_t {
+      name username;
+      hero_t hero;
+      fields_t fields;
+      game_cards_t deck;
+      game_cards_t hand;
+      game_cards_t graveyard;
+    };
 
   private:
     TABLE player {
@@ -108,8 +137,8 @@ CONTRACT som : public contract {
 
     TABLE game {
       uint64_t game_id;
-      name player_a;
-      name player_b;
+      game_player_t player_a;
+      game_player_t player_b;
 
       TABLE_PRIMARY_KEY(game_id);
     };

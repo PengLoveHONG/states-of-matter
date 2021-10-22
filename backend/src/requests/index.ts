@@ -6,10 +6,10 @@ import getPrivateKeyHash from "./auth/getPrivateKeyHash.js";
 import signin from "./auth/signin.js";
 import signup from "./auth/signup.js";
 // Client
-import closeLobby from "./client/closeLobby.js";
-import createLobby from "./client/createLobby.js";
-import exitLobby from "./client/exitLobby.js";
+import destroyLobby from "./client/destroyLobby.js";
+import leaveLobby from "./client/leaveLobby.js";
 import joinLobby from "./client/joinLobby.js";
+import makeLobby from "./client/makeLobby.js";
 import saveDeck from "./client/saveDeck.js";
 import selectDeck from "./client/selectDeck.js";
 import setDeckKlass from "./client/setDeckKlass.js";
@@ -17,6 +17,7 @@ import setDeckName from "./client/setDeckName.js";
 import startGame from "./client/startGame.js";
 // Game
 import exitGame from "./game/exitGame.js";
+import playCard from "./game/playCard.js";
 // Sidenav
 import acceptFriend from "./sidenav/acceptFriend.js";
 import addFriend from "./sidenav/addFriend.js";
@@ -37,9 +38,9 @@ const events = {
   signin,
   signup,
   // Client
-  closeLobby,
-  createLobby,
-  exitLobby,
+  destroyLobby,
+  makeLobby,
+  leaveLobby,
   joinLobby,
   saveDeck,
   selectDeck,
@@ -48,6 +49,7 @@ const events = {
   startGame,
   // Game
   exitGame,
+  playCard,
   // Sidenav
   acceptFriend,
   addFriend,

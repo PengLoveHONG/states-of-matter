@@ -1,4 +1,5 @@
 import Eos from "./eos.js";
-import Mongo from "./mongo.js";
+import IO from "./io.js";
+import Mongo from "./mongo/mongo.js";
 
-export {Eos, Mongo};
+export {Eos, IO, Mongo};

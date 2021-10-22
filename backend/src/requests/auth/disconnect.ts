@@ -1,32 +1,33 @@
-import type {App} from "../../models/App";
+import type {App} from "../../models/App"
 
-// never forgetti code spaghetti ;w;
 const disconnect = async (app: App): Promise<void> => {
-  const {eos, mongo, io, socket} = app;
+  const {eos, io, mongo} = app;
 
-  const playerMongo = await mongo.spagete(socket.id, {
+  const {socket_id} = io;
+  const playerMongo = await mongo.findAndUpdatePlayer({socket_id}, {
     socket_id: "",
-    signatures: {}
+    signatures: {signout: ""}
   }, {returnDocument: "before"});
 
   if (!playerMongo.value) { return; }
 
-  const player = await eos.findPlayer(playerMongo.value.username);
+  const {username, public_key} = playerMongo.value;
+  const signature = playerMongo.value.signatures.signout;
+  const trx = await eos.pushAction("signout", {username, public_key, signature});
 
-  if (player) {
-    const {username, public_key} = player;
-    const signature = playerMongo.value.signatures.signout;
+  if (!trx) { return; }
 
-    const trx = await eos.pushAction("signout", {username, public_key, signature});
+  const player = await eos.findPlayer(username);
 
-    if (!trx) { return; }
+  if (!player) { return; }
 
-    const socket_ids = await mongo.getSocketIds(player.social.friends);
+  const {friends} = player.social;
+  const socket_ids = await mongo.getSocketIds(friends);
 
-    socket_ids?.forEach((socket_id) => {
-      io.to(socket_id).emit("updateFriend", {username, status: 0});
-    });
-  }
+  if (!socket_ids) { return; }
+
+  const {status} = player.account;
+  io.emitTo(socket_ids, "updateFriend", {username, status});
 };
 
 export default disconnect;

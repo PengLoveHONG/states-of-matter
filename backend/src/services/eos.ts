@@ -3,11 +3,11 @@ import settings from "../settings.js";
 
 import type {Api} from "eosjs";
 import type {GetTableRowsResult, PushTransactionArgs, ReadOnlyTransactResult} from "eosjs/dist/eosjs-rpc-interfaces";
+import type {TransactResult} from "eosjs/dist/eosjs-api-interfaces";
 import type {Socket} from "socket.io";
 import type {Game} from "../models/Game";
 import type {Lobby} from "../models/Lobby";
 import type {Player} from "../models/Player";
-import { TransactResult } from "eosjs/dist/eosjs-api-interfaces";
 
 class Eos {
   constructor(

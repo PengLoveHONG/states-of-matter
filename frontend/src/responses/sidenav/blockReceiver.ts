@@ -22,7 +22,7 @@ const blockReceiver = (params: Params): void => {
 
     friends.splice(i, 1);
 
-    if (chat.username === username) chat.isOpen = false;
+    if (chat.username === username) chat.is_open = false;
 
     return store;
   });

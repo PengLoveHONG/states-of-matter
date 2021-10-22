@@ -2,19 +2,20 @@ import {writable} from "svelte/store";
 
 import type {Writable} from "svelte/store";
 
+interface Modals {
+  addFriend: boolean;
+  block: boolean
+  changeDeckName: boolean;
+  gift: boolean;
+  joinLobby: boolean;
+  setDeckKlass: boolean;
+  tip: boolean;
+  unfriend: boolean;
+}
 interface ModalStore {
   data: any;
   current: string;
-  list: {
-    addFriend: boolean;
-    block: boolean
-    changeDeckName: boolean;
-    gift: boolean;
-    joinCustom: boolean;
-    setDeckKlass: boolean;
-    tip: boolean;
-    unfriend: boolean;
-  };
+  list: Modals;
 }
 
 const modalStore: Writable<ModalStore> = writable({
@@ -25,7 +26,7 @@ const modalStore: Writable<ModalStore> = writable({
     block: false,
     changeDeckName: false,
     gift: false,
-    joinCustom: false,
+    joinLobby: false,
     setDeckKlass: false,
     tip: false,
     unfriend: false

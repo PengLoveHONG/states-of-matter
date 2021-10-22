@@ -1,5 +1,4 @@
-import {get} from "svelte/store";
-import {modalStore, notificationStore, socialStore} from "stores/view";
+import {modalStore, notificationStore} from "stores/view";
 
 const miscService = {
   showNotification (msg: string): void {
@@ -43,13 +42,6 @@ const miscService = {
   
       return store;
     });
-  },
-
-  getSocketIds (): Array<string> {
-    return get(socialStore).friends.reduce((acc, friend) => {
-      if (friend.socketId) {acc.push(friend.socketId);}
-      return acc;
-    }, [] as Array<string>);
   }
 };
 

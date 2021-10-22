@@ -8,11 +8,14 @@ interface Params {
 }
 
 const setDeckKlass = async (app: App, params: Params): Promise<void> => {
-  const {eos, socket} = app;
+  const {eos, io} = app;
   const {id, klass} = params;
+
   const trx = await eos.pushAction("setdeckklass", params);
 
-  if (trx) { socket.emit("setDeckKlass", {id, klass}); }
+  if (!trx) { return; }
+
+  io.emit("setDeckKlass", {id, klass});
 };
 
 export default setDeckKlass;

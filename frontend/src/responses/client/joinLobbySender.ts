@@ -1,12 +1,12 @@
 import {get} from "svelte/store";
 import {status} from "models/data/Player";
-import {miscService, socketService} from "services";
+import {socketService} from "services";
 import {lobbyStore, playerStore} from "stores/data";
 
 interface Params { lobby: any; }
 
 const joinLobbySender = (params: Params): void => {
-  const player = get(playerStore);
+  const {username} = get(playerStore);
 
   lobbyStore.set(params.lobby);
 
@@ -15,10 +15,7 @@ const joinLobbySender = (params: Params): void => {
     return store;
   });
 
-  socketService.emit("updateFriend", {
-    username: player.username,
-    status: status.INLOBBY
-  });
+  socketService.emit("updateFriend", {username});
 };
 
 export default joinLobbySender;

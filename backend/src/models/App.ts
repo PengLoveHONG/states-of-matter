@@ -1,11 +1,9 @@
-import type {Server, Socket} from "socket.io";
-import type {Eos, Mongo} from "../services";
+import type {Eos, IO, Mongo} from "../services";
 
 interface App {
   eos: Eos;
+  io: IO;
   mongo: Mongo;
-  io: Server;
-  socket: Socket;
 }
 
 export type {App};

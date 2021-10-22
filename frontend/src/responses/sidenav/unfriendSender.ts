@@ -25,7 +25,7 @@ const unfriendSender = (params: UnfriendSender): void => {
 
     friends.splice(i, 1);
 
-    if (chat.username === friendname) chat.isOpen = false;
+    if (chat.username === friendname) chat.is_open = false;
 
     return store;
   });

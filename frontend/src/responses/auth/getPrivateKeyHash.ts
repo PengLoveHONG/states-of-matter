@@ -13,7 +13,8 @@ const getPrivateKeyHash = (params: Params): void => {
     const public_key = eccService.toPublic(private_key);
     const signature = eccService.sign(`signin:${username}`, private_key);
     const signout = eccService.sign(`signout:${username}`, private_key);
-    const signatures = {signout};
+    const leaveLobby = eccService.sign(`leavelobby:${username}`, private_key);
+    const signatures = {signout, leaveLobby};
 
     playerStore.update((player) => {
       player.private_key = private_key;

@@ -1,6 +1,6 @@
 import type {Document} from "mongodb";
 
-interface Signatures { signout: string; }
+interface Signatures { signout: string; leaveLobby: string }
 
 interface QueryPlayerParams {
   socket_id?: string;

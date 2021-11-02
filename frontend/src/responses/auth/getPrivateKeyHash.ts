@@ -15,9 +15,9 @@ const getPrivateKeyHash = (params: Params): void => {
     const signout = eccService.sign(`signout:${username}`, private_key);
     const signatures = {signout};
 
-    playerStore.update((store) => {
-      store.private_key = private_key;
-      return store;
+    playerStore.update((player) => {
+      player.private_key = private_key;
+      return player;
     });
 
     socketService.emit("signin", {username, public_key, signature, signatures});

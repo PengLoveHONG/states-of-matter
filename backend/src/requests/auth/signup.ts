@@ -20,7 +20,7 @@ const signup = async (app: App, params: Params): Promise<void> => {
     username,
     public_key,
     private_key_hash,
-    signatures: {signout: ""}
+    signatures: {signout: "", leaveLobby: ""}
   });
 
   if (!insert.acknowledged) { return; }

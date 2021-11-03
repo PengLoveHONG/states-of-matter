@@ -2,6 +2,7 @@ import type {App} from "../../models/App"
 
 interface Signatures {
   signout: string;
+  leaveLobby: string;
 }
 
 interface Params {

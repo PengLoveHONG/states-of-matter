@@ -23,7 +23,7 @@ const signin = async (app: App, params: Params): Promise<void> => {
   if (!trx) { return; }
 
   const {socket_id} = io;
-  const updated = await mongo.updatePlayer({username}, {socket_id, signatures})
+  const updated = await mongo.updatePlayer({username}, {socket_id, signatures});
 
   if (!updated) { return; }
 

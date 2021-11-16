@@ -459,73 +459,6 @@ ACTION som::startgame(
   auto lobby = lobbies_table.find(lobby_id);
   auto challengee = players_table.find(lobby->challengee.username.value);
 
-  // WARRNING!!! SPAGHETTI OVERFLOW INCOMING;
-  hero_t player_a_hero = {1000, 30, 10};
-  hero_t player_b_hero = {1000, 30, 10};
-  fields_t player_a_fields = {{0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}};
-  fields_t player_b_fields = {{0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}};
-  game_cards_t player_a_deck = {};
-  game_cards_t player_b_deck = {};
-  game_cards_t player_a_hand = {};
-  game_cards_t player_b_hand = {};
-  game_cards_t player_a_graveyard = {};
-  game_cards_t player_b_graveyard = {};
-
-  uint16_t gid = 0;
-
-  for (uint16_t i = 0; i < player->decks[1].cards.size(); i += 1) {
-    uint16_t id = player->decks[1].cards[i].id;
-
-    player_a_deck.push_back({gid, id});
-    gid += 1;
-
-    if (player->decks[1].cards[i].amount > 1) {
-      player_a_deck.push_back({gid, id});
-      gid += 1;
-    }
-  }
-
-  gid = 0;
-
-  for (uint16_t i = 0; i < challengee->decks[1].cards.size(); i += 1) {
-    uint16_t id = challengee->decks[1].cards[i].id;
-
-    player_b_deck.push_back({gid, id});
-    gid += 1;
-
-    if (challengee->decks[1].cards[i].amount > 1) {
-      player_b_deck.push_back({gid, id});
-      gid += 1;
-    }
-  }
-
-  player_a_hand = {
-    player_a_deck[25],
-    player_a_deck[26],
-    player_a_deck[27],
-    player_a_deck[28],
-    player_a_deck[29],
-  };
-  player_a_deck.pop_back();
-  player_a_deck.pop_back();
-  player_a_deck.pop_back();
-  player_a_deck.pop_back();
-  player_a_deck.pop_back();
-
-  player_b_hand = {
-    player_b_deck[25],
-    player_b_deck[26],
-    player_b_deck[27],
-    player_b_deck[28],
-    player_b_deck[29],
-  };
-  player_b_deck.pop_back();
-  player_b_deck.pop_back();
-  player_b_deck.pop_back();
-  player_b_deck.pop_back();
-  player_b_deck.pop_back();
-  // NEVER FORGETTI CODE SPAGHETTI XD
-
   index.modify(player, _self, [&](auto &row) {
     row.account.lobby_id = 0;
     row.account.game_id = lobby_id;
@@ -540,27 +473,10 @@ ACTION som::startgame(
 
   lobbies_table.erase(lobby);
 
-  game_player_t player_a = {
-    player->username,
-    player_a_hero,
-    player_a_fields,
-    player_a_deck,
-    player_a_hand,
-    player_a_graveyard
-  };
-  game_player_t player_b = {
-    challengee->username,
-    player_b_hero,
-    player_b_fields,
-    player_b_deck,
-    player_b_hand,
-    player_b_graveyard
-  };
-
   games_table.emplace(_self, [&](auto &row) {
     row.game_id = lobby_id;
-    row.player_a = player_a;
-    row.player_b = player_b;
+    row.player_a = player->username;
+    row.player_b = challengee->username;
   });
 }
 
@@ -576,7 +492,7 @@ ACTION som::endgame(
   auto index = players_table.get_index<by_public_key>();
   auto player = index.find(public_key_to_fixed_bytes(public_key));
   auto game = games_table.find(game_id);
-  auto challengee = players_table.find(game->player_b.username.value);
+  auto challengee = players_table.find(game->player_b.value);
 
   index.modify(player, _self, [&](auto &row) {
     row.account.game_id = 0;
@@ -596,35 +512,35 @@ ACTION som::playcard(string field, uint16_t gid, uint16_t id, public_key public_
   auto index = players_table.get_index<by_public_key>();
   auto player = index.find(public_key_to_fixed_bytes(public_key));
 
-  name username = player->username;
+  // name username = player->username;
 
-  string msg = format_string("playcard:%s", username.to_string().c_str());
-  checksum256 digest = sha256(msg.c_str(), msg.length());
-  assert_recover_key(digest, signature, public_key);
+  // string msg = format_string("playcard:%s", username.to_string().c_str());
+  // checksum256 digest = sha256(msg.c_str(), msg.length());
+  // assert_recover_key(digest, signature, public_key);
 
-  uint64_t game_id = player->account.game_id;
+  // uint64_t game_id = player->account.game_id;
 
-  auto game = games_table.find(game_id);
+  // auto game = games_table.find(game_id);
 
-  games_table.modify(game, _self, [&](auto &row) {
-    if (row.player_a.username == username) {
-      for (int i = 0; i < row.player_a.hand.size(); i += 1) {
-        if (row.player_a.hand[i].gid == gid) {
-          row.player_a.fields.minion_b = {gid, id};
-          row.player_a.hand.erase(row.player_a.hand.begin() + i);
-          break;
-        }
-      }
-    } else {
-      for (int i = 0; i < row.player_b.hand.size(); i += 1) {
-        if (row.player_b.hand[i].gid == gid) {
-          row.player_b.fields.minion_b = {gid, id};
-          row.player_b.hand.erase(row.player_b.hand.begin() + i);
-          break;
-        }
-      }
-    }
-  });
+  // games_table.modify(game, _self, [&](auto &row) {
+  //   if (row.player_a.username == username) {
+  //     for (int i = 0; i < row.player_a.hand.size(); i += 1) {
+  //       if (row.player_a.hand[i].gid == gid) {
+  //         row.player_a.fields.minion_b = {gid, id};
+  //         row.player_a.hand.erase(row.player_a.hand.begin() + i);
+  //         break;
+  //       }
+  //     }
+  //   } else {
+  //     for (int i = 0; i < row.player_b.hand.size(); i += 1) {
+  //       if (row.player_b.hand[i].gid == gid) {
+  //         row.player_b.fields.minion_b = {gid, id};
+  //         row.player_b.hand.erase(row.player_b.hand.begin() + i);
+  //         break;
+  //       }
+  //     }
+  //   }
+  // });
 }
 
 ACTION som::rmplayer(name username) {

@@ -1,17 +1,17 @@
-<style>
-  .magicfield {
-    height: 208px;
-    width: 160px;
-    margin: var(--spacing-sm) var(--spacing-sm) 0 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+<style lang="scss">
+  @import "../../../styles/mixins";
+  @import "../../../styles/variables";
 
-    border: 1px solid rgb(var(--green));
+  .magic {
+    height: $game-field-height;
+    width: $game-field-width;
+    @include d-flex(row, center, center);
+    border: 2px solid $green;
     box-sizing: border-box;
+    color: white;
   }
 </style>
 
-<div class="magicfield">
+<div class="magic">
   <span class="f--green">Magic Field</span>
 </div>

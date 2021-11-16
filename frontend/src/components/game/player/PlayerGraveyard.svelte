@@ -2,15 +2,16 @@
   @import "../../../styles/mixins";
   @import "../../../styles/variables";
 
-  .trapfield {
+  .graveyard {
     height: $game-field-height;
     width: $game-field-width;
     @include d-flex(row, center, center);
-    border: 2px solid $red;
-    box-sizing: border-box;
+    background-color: $purple;
+    box-shadow: $elevation-sm;
+    color: white;
   }
 </style>
 
-<div class="trapfield">
-  <span class="f--red">Trap Field</span>
+<div class="graveyard">
+  Graveyard
 </div>

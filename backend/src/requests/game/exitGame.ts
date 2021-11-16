@@ -20,12 +20,12 @@ const exitGame = async (app: App, params: Params): Promise<void> => {
 
   io.emit("exitGameSender");
 
-  const {username} = game.player_b;
-  const challengee = await mongo.findPlayer({username});
+  // const username = game.player_b;
+  // const challengee = await mongo.findPlayer({username});
 
-  if (!challengee || !challengee.socket_id) { return; }
+  // if (!challengee || !challengee.socket_id) { return; }
 
-  io.emitTo(challengee.socket_id, "exitGameReceiver");
+  // io.emitTo(challengee.socket_id, "exitGameReceiver");
 };
 
 export default exitGame;

@@ -2,6 +2,7 @@ import type {App} from "../../models/App"
 
 interface Signatures {
   signout: string;
+  leaveLobby: string;
 }
 
 interface Params {
@@ -52,7 +53,7 @@ const signin = async (app: App, params: Params): Promise<void> => {
 
     if (!lobby) { return; }
   } else if (player.account.game_id) {
-    game = await eos.findGame(player.account.game_id);
+    game = await mongo.findGame({id: player.account.game_id});
 
     if (!game) { return; }
   }

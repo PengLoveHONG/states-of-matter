@@ -1,0 +1,4 @@
+otpauth://totp/BINANCE:?secret=P2LLR26FRBMH7OUJ&issuer=BINANCE
+otpauth://totp/P3A%20porkbun:?secret=YYYI7MRS6H5LEUP3&issuer=P3A%20porkbun
+otpauth://totp/UPHOLD:?secret=ezvhct6m7q6jyj3meo2jpo6drrupceap&issuer=UPHOLD
+otpauth://totp/KUCOIN:?secret=CPUTFONRNSEF65ZKDHFSBUWP27BZDKO2&issuer=KUCOIN

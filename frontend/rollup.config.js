@@ -2,6 +2,7 @@ import commonjs from "@rollup/plugin-commonjs";
 import nodeResolve from "@rollup/plugin-node-resolve";
 import typescript from "@rollup/plugin-typescript";
 import cssOnly from "rollup-plugin-css-only";
+import scss from 'rollup-plugin-scss'
 import livereload from "rollup-plugin-livereload";
 import svelte from "rollup-plugin-svelte";
 import {terser} from "rollup-plugin-terser";
@@ -42,7 +43,6 @@ export default {
     file: "dist/build/bundle.js"
   },
   plugins: [
-    commonjs(),
     cssOnly({
       output: "bundle.css"
     }),
@@ -50,10 +50,9 @@ export default {
       browser: true,
       dedupe: ["svelte"]
     }),
-    typescript({
-      sourceMap: !production,
-      inlineSources: !production
-    }),
+    commonjs(),
+    typescript(),
+    // scss(),
     svelte({
       preprocess: preprocess({
         sourceMap: !production

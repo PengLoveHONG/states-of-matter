@@ -20,8 +20,13 @@ const liquidHero = {
     name: "Absorption",
     amount: 50,
     effect: `
-      Liquid hero and minions have % chance to absorb all incoming damage.
-      Whenever the hero or minions absorb damage, increase chance by 1%.
+      <span class="f--purple">Passive</span><br>
+      Liquid Hero and Minions have % chance to absorb all incoming damage.
+      When this occurs, they gain +1% chance.<br>
+      <span class="f--purple">Active</span> <i class="fas fa-battery-full"></i>
+      30<br>
+      Liquid hero and minions heal
+      <span class="f--green">25% missing <i class="fas fa-heart"></i></span>.
     `
   }
 };

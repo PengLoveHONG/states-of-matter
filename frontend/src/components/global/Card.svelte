@@ -12,6 +12,17 @@
     }
   };
 
+  $: borderr = "";
+  const getBorder = (): string => {
+    if (card.type === "Minion") {
+      return "border-top: 2px solid orange;";
+    } else if (card.type === "Magic") {
+      return "border-top: 2px solid green;";
+    } else {
+      return "border-top: 2px solid red;";
+    }
+  };
+
   export let card: any = {};
 </script>
 
@@ -57,7 +68,7 @@
   }
   .card__front {
     background-color: rgb(var(--dark-grey));
-    box-sizing: border-box;
+   
   }
   .card__back { transform: rotateY(-180deg); }
   .card__back__img {
@@ -102,24 +113,75 @@
     justify-content: center;
     transform: translateZ(8px);
   }
+  .header {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    padding: $spacing-sm;
+    @include d-flex(row, center, space-between);
+    background-color: rgb(var(--dark-grey), 0.9);
+    box-sizing: border-box;
+    cursor: pointer;
+    font-size: $font-md;
 
+    &:hover .tooltip { display: initial; }
+    // font-size: $font-md;
+  }
   .tooltip {
     display: none;
     position: absolute;
-    top: 100%;
-    right: 0;
+    top: 0;
+    right: calc(100% + 1em);
     height: auto;
-    width: 160px;
+    width: 180px;
     padding: var(--spacing-sm);
-    background-color: rgb(var(--light-grey));
+    background-color: rgba(var(--light-grey), 0.9);
     box-shadow: var(--elevation-lg);
+    font-size: 12px;
+  }
+
+  .stat {
+    position: absolute;
+    height: 32px;
+    width: 32px;
+    @include d-flex(column, center, center);
+    background-color: rgba(var(--dark-grey), 0.9);
+    border-radius: 50%;
+    box-sizing: border-box;
+    box-shadow: var(--elevation-md);
+    font-size: $font-sm;
+
+    &__damage {
+      bottom: 4px;
+      left: 4px;
+      border: 2px solid $orange;
+    }
+
+    &__health {
+      bottom: 4px;
+      right: 4px;
+      border: 2px solid $green;
+    }
+
+    &__solid, &__liquid, &__gas, &__plasma, &__neutral {
+      bottom: 4px;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+    &__solid { border: 2px solid $solid; }
+    &__liquid { border: 2px solid $liquid; }
+    &__gas { border: 2px solid $gas; }
+    &__plasma { border: 2px solid $plasma; }
+    &__neutral { border: 2px solid $light-grey; }
   }
 
   .circle-stat-green,
   .circle-stat-orange,
   .circle-stat-red,
   .circle-stat-purple,
-  .circle-stat-magic {
+  .circle-stat-grey,
+  .circle-stat-blue {
     position: absolute;
     height: 32px;
     width: 32px;
@@ -127,10 +189,11 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
+    background-color: rgba(var(--dark-grey), 0.9);
     box-shadow: var(--elevation-md);
     border-radius: 50%;
     cursor: pointer;
-    font-size: 0.6rem;
+    font-size: $font-sm;
   }
 
   .circle-stat-magic:hover .tooltip {
@@ -145,16 +208,18 @@
     display: initial;
   } */
 
+  $stat-dimension: 32px;
 
+  
   .circle-stat-green {
-    bottom: 0;
-    right: 0;
-    background-color: rgb(var(--green));
+    bottom: 4px;
+    right: 4px;
+    border: 2px solid $green;
   }
   .circle-stat-orange {
-    bottom: 0;
-    left: 0;
-    background-color: rgb(var(--orange));
+    bottom: 4px;
+    left: 4px;
+    border: 2px solid $orange;
   }
   .circle-stat-red {
     bottom: -5%;
@@ -162,24 +227,43 @@
     background-color: rgb(var(--red));
     /* transform: translateX(-50%); */
   }
-  .circle-stat-purple {
-    top: 0;
-    left: 0;
-    background-color: rgb(var(--purple));
+  .circle-stat-grey {
+    bottom: 4px;
+    left: 50%;
+    transform: translateX(-50%);
+    border: 2px solid $light-grey;
   }
-  .circle-stat-magic {
-    top: 0;
-    right: 0;
-    background-color: rgb(var(--purple));
+  .circle-stat-purple {
+    bottom: $stat-dimension;
+    left: 4px;
+    border: 2px solid $purple;
+  }
+  .circle-stat-blue {
+    bottom: $stat-dimension;
+    right: 4px;
+    border: 2px solid $blue;
   }
 </style>
 
 <div class="scene" on:click={selectCard}>
-  <div class="card" class:selected={card.gid === $selectedCard.gid}>
+  <div class="card" class:selected={card.gid === $selectedCard.gid} >
 
     <div class="card__front">
 
       <main class="card__main">
+
+        <div class="header" style={getBorder()}>
+          <span>{card.name}</span>
+
+          <div class="f--blue">
+            <i class="fas fa-battery-half fa-fw"></i> 7
+          </div>
+          <!-- <i class="fas fa-star fa-fw"></i> -->
+
+          <div class="tooltip">
+            {@html card.effect}
+          </div>
+        </div>
 
         <img
           class="card__img"
@@ -187,7 +271,7 @@
           alt={card.name}>
 
         {#if card.type === "Minion"}
-          <div class="circle-stat-green" data-tooltip="Health">
+          <div class="stat stat__health">
             <div>
               <i class="fas fa-heart"></i>
             </div>
@@ -196,7 +280,7 @@
             </div>
           </div>
 
-          <div class="circle-stat-orange" data-tooltip="Damage">
+          <div class="stat stat__damage">
             <div>
               <i class="fas fa-fire"></i>
             </div>
@@ -204,20 +288,21 @@
               {card.stats.damage}
             </div>
           </div>
+
           {#if card.klass === 1}
-            <div class="stat f--yellow">
+            <div class="stat stat__solid">
               <i class="fas fa-shield-alt fa-fw"></i> {card.stats.damageReduction}%
             </div>
           {:else if card.klass === 2}
-            <div class="stat f--purple">
+            <div class="stat stat__liquid">
               <i class="fas fa-tint"></i> {card.stats.absorbChance}%
             </div>
           {:else if card.klass === 3}
-            <div class="stat f--orange">
+            <div class="stat stat__gas">
               <i class="fas fa-radiation"></i> {card.stats.neurotoxin}%
             </div>
           {:else if card.klass === 4}
-            <div class="circle-stat-red" data-tooltip="Double Damage Chance">
+            <div class="stat stat__plasma">
               <div>
                 <i class="fas fa-khanda"></i>
               </div>
@@ -225,28 +310,21 @@
                 {card.stats.criticalChance}%
               </div>
             </div>
+          {:else if card.klass === 0}
+            <div class="stat stat__neutral">
+              <i class="fas fa-times fa-fw"></i>
+            </div>
           {/if}
         {/if}
-        <div class="circle-stat-purple">
-          <i class="fas fa-star"></i>
-        </div>
 
-        <div class="circle-stat-magic">
-          <i class="fas fa-magic"></i>
-
-          <div class="tooltip">
-            <div>
-              {card.name}
-            </div>
-            <div>
-              {@html card.effect}
-            </div>
+        <!-- <div class="circle-stat-blue">
+          <div>
+            <i class="fas fa-battery-half"></i>
           </div>
-        </div>
-
-        <!-- <Tooltip title="Hello">
-          
-        </Tooltip> -->
+          <div>
+            7
+          </div>
+        </div> -->
 
       </main>
 

@@ -4,8 +4,8 @@
 </script>
 
 <style lang="scss">
-  @import "../../styles/mixins";
-  @import "../../styles/variables";
+  @import "../../../styles/mixins";
+  @import "../../../styles/variables";
 
   .hero {
     position: relative;
@@ -116,13 +116,13 @@ background-color: rgba(var(--dark-grey), 0.9);
 </style>
 
 <div class="hero">
-
+  {#if $gameStore.playerA.username !== $playerStore.username}
   <div class="header">
-    <span>{heroes.get(2).name}</span>
+    <span>{heroes.get($gameStore.playerA.hero.id).name}</span>
     <i class="fas fa-mask fa-fw"></i>
 
     <div class="tooltip">
-      {@html heroes.get(2).special.effect}
+      {@html heroes.get($gameStore.playerA.hero.id).special.effect}
       {#if $gameStore.playerA.username !== $playerStore.username}
         {$gameStore.playerA.username}
       {:else}
@@ -131,14 +131,14 @@ background-color: rgba(var(--dark-grey), 0.9);
     </div>
   </div>
 
-  <img class="hero__img" src="assets/classes/{2}_hero.jpg" alt="Hero">
+  <img class="hero__img" src="assets/classes/{$gameStore.playerA.hero.id}_hero.jpg" alt="Hero">
 
   <div class="circle-stat-green" data-tooltip="Health">
     <div>
       <i class="fas fa-heart"></i>
     </div>
     <div>
-      {heroes.get(2).hp}
+      {heroes.get($gameStore.playerA.hero.id).hp}
     </div>
   </div>
 
@@ -147,7 +147,7 @@ background-color: rgba(var(--dark-grey), 0.9);
       <i class="fas fa-fire"></i>
     </div>
     <div>
-      {heroes.get(2).damage}
+      {heroes.get($gameStore.playerA.hero.id).damage}
     </div>
   </div>
 
@@ -169,9 +169,64 @@ background-color: rgba(var(--dark-grey), 0.9);
       <i class="fas fa-tint"></i>
     </div>
     <div>
-      {heroes.get(2).special.amount}
+      {heroes.get($gameStore.playerA.hero.id).special.amount}
     </div>
   </div>
+  {:else if $gameStore.playerB.username !== $playerStore.username}
+    <div class="header">
+      <span>{heroes.get($gameStore.playerB.hero.id).name}</span>
+      <i class="fas fa-mask fa-fw"></i>
 
-  
+      <div class="tooltip">
+        {@html heroes.get($gameStore.playerB.hero.id).special.effect}
+        {#if $gameStore.playerB.username !== $playerStore.username}
+          {$gameStore.playerB.username}
+        {:else}
+          {$gameStore.playerB.username}
+        {/if}
+      </div>
+    </div>
+
+    <img class="hero__img" src="assets/classes/{$gameStore.playerB.hero.id}_hero.jpg" alt="Hero">
+
+    <div class="circle-stat-green" data-tooltip="Health">
+      <div>
+        <i class="fas fa-heart"></i>
+      </div>
+      <div>
+        {heroes.get($gameStore.playerB.hero.id).hp}
+      </div>
+    </div>
+
+    <div class="circle-stat-orange" data-tooltip="Damage">
+      <div>
+        <i class="fas fa-fire"></i>
+      </div>
+      <div>
+        {heroes.get($gameStore.playerB.hero.id).damage}
+      </div>
+    </div>
+
+    <div class="circle-ability" data-tooltip="Special Ability">
+      <i class="fas fa-medkit fa-2x fa-fw"></i>
+    </div>
+
+    <div class="circle-stat-blue" data-tooltip="Mana">
+      <div>
+        <i class="fas fa-battery-full"></i>
+      </div>
+      <div>
+        100
+      </div>
+    </div>
+
+    <div class="circle-stat-purple" data-tooltip="Rejuvenation">
+      <div>
+        <i class="fas fa-tint"></i>
+      </div>
+      <div>
+        {heroes.get($gameStore.playerB.hero.id).special.amount}
+      </div>
+    </div>
+  {/if}
 </div>

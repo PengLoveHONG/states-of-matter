@@ -1,22 +1,24 @@
 interface Hero {
+  id: number;
   health: number;
-  damage: number;
-  special: number;
-}
-
-interface Fields {
-  minion_a: Card;
-  minion_b: Card;
-  minion_c: Card;
-  minion_d: Card;
-  minion_e: Card;
-  magic: Card;
-  trap: Card;
+  maxHealth: number;
+  mana: number;
+  maxMana: number;
+  passive: number;
 }
 
 interface Card {
-  gid: number;
   id: number;
+  gid: number;
+}
+
+interface Fields {
+  magic: Card;
+  minionA: Card;
+  minionB: Card;
+  minionC: Card;
+  minionD: Card;
+  trap: Card;
 }
 
 interface Player {
@@ -29,9 +31,9 @@ interface Player {
 }
 
 interface Game {
-  game_id: number;
-  player_a: Player;
-  player_b: Player;
+  id: number;
+  playerA: Player;
+  playerB: Player;
 }
 
 export type {Game};

@@ -1,98 +1,51 @@
 <script lang="ts">
   import {onMount, setContext} from "svelte";
-  import {writable} from "svelte/store";
-  import Deck from "./Deck.svelte";
-  import Graveyard from "./Graveyard.svelte";
   import OpponentFields from "./opponent/OpponentFields.svelte";
-  import OpponentHandCards from "./opponent/OpponentHandCards.svelte";
   import PlayerFields from "./player/PlayerFields.svelte";
-  import PlayerHandCards from "./player/PlayerHandCards.svelte";
   import {eccService, socketService} from "services";
   import {gameStore, playerStore} from "stores/data";
-
-  let selectedCard = writable({
-    gid: 0,
-    id: 0
-  });
+  import {selectedCard} from "./stores";
 
   let currentPlayer: string;
 
   setContext("selectedCard", selectedCard);
 
-  const exit = (): void => {
+  const onEndGame = (): void => {
     const {public_key, private_key} = $playerStore;
-    const {game_id} = $gameStore;
-    const signature = eccService.sign(`endgame:${game_id}`, private_key);
+    const {id} = $gameStore;
+    const signature = eccService.sign(`endgame:${id}`, private_key);
 
-    socketService.emit("exitGame", {game_id, public_key, signature});
+    socketService.emit("exitGame", {game_id: id, public_key, signature});
   };
 
   onMount(() => {
-    currentPlayer = $gameStore.player_a.username === $playerStore.username ? "player_a" : "player_b";
+    currentPlayer = $gameStore.playerA.username === $playerStore.username ? "player_a" : "player_b";
   });
 </script>
 
-<style>
+<style lang="scss">
+  @import "../../styles/mixins";
+  @import "../../styles/variables";
+
   .game {
+    position: relative;
     height: 100%;
     width: 100%;
-    display: flex;
-    flex-direction: column;
-    overflow: hidden;
+    @include d-flex(column, center, center);
   }
-  .player, .opponent {
-    flex-basis: 50%;
 
-    display: flex;
-    align-items: center;
-    justify-content: space-evenly;
-  }
-  .player__right {
-    display: flex;
-    flex-direction: column;
-  }
-  .player__cards {
-    display: flex;
-    justify-content: space-between;
+  .btn-end {
+    position: absolute;
+    top: 0;
+    left: 0;
   }
 </style>
 
 <div class="game">
-  {#if $gameStore.player_a.username === $playerStore.username}
-    <button class="btn--raised-accent" on:click={exit}>END</button>
+  {#if $gameStore.playerA.username === $playerStore.username}
+    <button class="btn-end btn--raised-accent" on:click={onEndGame}>END GAME</button>
   {/if}
-  <div class="opponent">
-    <p>
-      {#if $gameStore.player_a.username !== $playerStore.username}
-        {$gameStore.player_a.username}
-      {:else}
-        {$gameStore.player_b.username}
-      {/if}
-    </p>
-    <div class="player__right">
-      <div class="player__cards">
-        <Deck/>
-        <OpponentHandCards/>
-        <Graveyard/>
-      </div>
-      <OpponentFields/>
-    </div>
-  </div>
-  <div class="player">
-    <p>
-      {#if $gameStore.player_a.username === $playerStore.username}
-        {$gameStore.player_a.username}
-      {:else}
-        {$gameStore.player_b.username}
-      {/if}
-    </p>
-    <div class="player__right">
-      <PlayerFields/>
-      <div class="player__cards">
-        <Graveyard/>
-        <PlayerHandCards/>
-        <Deck/>
-      </div>
-    </div>
-  </div>
+
+  <OpponentFields/>
+  <PlayerFields/>
 </div>

@@ -4,10 +4,10 @@
   import {cardz} from "data";
   import {eccService, socketService} from "services";
   import {gameStore, playerStore} from "stores/data";
-  import Card from "../Card.svelte";
+  import {Card} from "components";
 
-  $: isCurrentPlayerA = $gameStore.player_a.username === $playerStore.username;
-  $: isCurrentPlayerB = $gameStore.player_b.username === $playerStore.username;
+  $: isCurrentPlayerA = $gameStore.playerA.username === $playerStore.username;
+  $: isCurrentPlayerB = $gameStore.playerB.username === $playerStore.username;
 
   let selectedCard: Writable<{gid: number; id: number}> = getContext("selectedCard");
   let field: string;
@@ -34,58 +34,70 @@
   export {field};
 </script>
 
-<style>
+<style lang="scss">
+  @import "../../../styles/mixins";
+  @import "../../../styles/variables";
+
   .minionfield {
-    height: 208px;
-    width: 160px;
-    margin: var(--spacing-sm) var(--spacing-sm) 0 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border: 1px solid rgb(var(--orange));
-    box-sizing: border-box;
+    height: $game-field-height;
+    width: $game-field-width;
+    @include d-flex(row, center, center);
+    background-color: $orange;
+    box-shadow: $elevation-sm;
+    cursor: not-allowed;
+  }
+
+  .summonable {
+    animation: glow 1s ease-in-out infinite;
+  }
+  @keyframes glow {
+    0% {
+      box-shadow: 0 0 0 0 rgb(var(--orange));
+    } 50% {
+      box-shadow: 0 0 4px 2px rgb(var(--orange));
+    } 100% {
+      box-shadow: 0 0 0 0 rgb(var(--orange));
+    }
   }
 </style>
 
-<div class="minionfield" on:click={onPlayCard}>
+<div class="minionfield" on:click={onPlayCard} class:summonable={$selectedCard.gid !== 0}>
   {#if field === "a"}
-
-    {#if isCurrentPlayerA && isntEmptyField("player_a", "minion_a")}
-      <Card card={getCard("player_a", "minion_a")}/>
-    {:else if isCurrentPlayerB && isntEmptyField("player_b", "minion_a")}
-      <Card card={getCard("player_b", "minion_a")}/>
+    {#if isCurrentPlayerA && isntEmptyField("playerA", "minionA")}
+      <Card card={getCard("playerA", "minionA")}/>
+    {:else if isCurrentPlayerB && isntEmptyField("playerB", "minionA")}
+      <Card card={getCard("playerB", "minionA")}/>
     {:else}
-      <span class="f--orange">Minion Field {field}</span>
+      <span>Minion Field {field}</span>
     {/if}
-
   {:else if field === "b"}
 
-    {#if isCurrentPlayerA && isntEmptyField("player_a", "minion_b")}
-      <Card card={getCard("player_a", "minion_b")}/>
-    {:else if isCurrentPlayerB && isntEmptyField("player_b", "minion_b")}
-      <Card card={getCard("player_b", "minion_b")}/>
+    {#if isCurrentPlayerA && isntEmptyField("playerA", "minionB")}
+      <Card card={getCard("playerA", "minionB")}/>
+    {:else if isCurrentPlayerB && isntEmptyField("playerB", "minionB")}
+      <Card card={getCard("playerB", "minionB")}/>
     {:else}
-      <span class="f--orange">Minion Field {field}</span>
+      <span>Minion Field {field}</span>
     {/if}
 
   {:else if field === "c"}
 
-    {#if isCurrentPlayerA && isntEmptyField("player_a", "minion_c")}
-      <Card card={getCard("player_a", "minion_c")}/>
-    {:else if isCurrentPlayerB && isntEmptyField("player_b", "minion_c")}
-      <Card card={getCard("player_b", "minion_c")}/>
+    {#if isCurrentPlayerA && isntEmptyField("playerA", "minionC")}
+      <Card card={getCard("playerA", "minionC")}/>
+    {:else if isCurrentPlayerB && isntEmptyField("playerB", "minionC")}
+      <Card card={getCard("playerB", "minionC")}/>
     {:else}
-      <span class="f--orange">Minion Field {field}</span>
+      <span>Minion Field {field}</span>
     {/if}
 
   {:else if field === "d"}
 
-    {#if isCurrentPlayerA && isntEmptyField("player_a", "minion_d")}
-      <Card card={getCard("player_a", "minion_d")}/>
-    {:else if isCurrentPlayerB && isntEmptyField("player_b", "minion_d")}
-      <Card card={getCard("player_b", "minion_d")}/>
+    {#if isCurrentPlayerA && isntEmptyField("playerA", "minionD")}
+      <Card card={getCard("playerA", "minionD")}/>
+    {:else if isCurrentPlayerB && isntEmptyField("playerB", "minionD")}
+      <Card card={getCard("playerB", "minionD")}/>
     {:else}
-      <span class="f--orange">Minion Field {field}</span>
+      <span>Minion Field {field}</span>
     {/if}
 
   {/if}

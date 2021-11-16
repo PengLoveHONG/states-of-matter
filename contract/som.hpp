@@ -137,8 +137,8 @@ CONTRACT som : public contract {
 
     TABLE game {
       uint64_t game_id;
-      game_player_t player_a;
-      game_player_t player_b;
+      name player_a;
+      name player_b;
 
       TABLE_PRIMARY_KEY(game_id);
     };

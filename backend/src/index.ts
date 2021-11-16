@@ -7,6 +7,7 @@ import {Server} from "socket.io";
 import settings from "./settings.js";
 import requests from "./requests/index.js";
 import {Eos, IO, Mongo} from "./services/index.js";
+import {mnemonicToSeed, generateMnemonic} from "bip39";
 
 import type {App} from "./models/App";
 
@@ -16,6 +17,10 @@ const {
   socket: {opts},
   server: {port}
 } = settings;
+
+console.log(`generateMnemonic()`);
+console.log(generateMnemonic());
+console.log(`generateMnemonic()`);
 
 const httpServer = createServer();
 const socketioServer = new Server(httpServer, opts);

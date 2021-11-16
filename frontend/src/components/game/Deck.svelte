@@ -2,23 +2,36 @@
   import {gameStore, playerStore} from "stores/data";
 </script>
 
-<style>
+<style lang="scss">
+  @import "../../styles/mixins";
+  @import "../../styles/variables";
+
   .player__deck {
-    height: 208px;
-    width: 160px;
-    margin: 0 var(--spacing-sm) var(--spacing-sm) 0;
+    position: relative;
+    height: $game-field-height;
+    width: $game-field-width;
   }
   .player__deck__img {
-    height: 208px;
-    width: 160px;
+    height: $game-field-height;
+    width: $game-field-width;
+  }
+
+  .numofcards {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-shadow: 0 0 2px black;
   }
 </style>
 
 <div class="player__deck">
-  {#if $gameStore.player_a.username === $playerStore.username}
-    {$gameStore.player_a.deck.length} / 30
-  {:else}
-    {$gameStore.player_b.deck.length} / 30
-  {/if}
+  <div class="numofcards">
+    {#if $gameStore.playerA.username === $playerStore.username}
+      {$gameStore.playerA.deck.length} / 30
+    {:else}
+      {$gameStore.playerB.deck.length} / 30
+    {/if}
+  </div>
   <img class="player__deck__img" src="assets/card-backs/default.jpg" alt="Deck">
 </div>

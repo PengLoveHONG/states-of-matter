@@ -5,6 +5,9 @@
   --spacing-lg: 1.1em;
   --spacing-xlg: 1.5em; */
 
+  --game-field-height: 192px;
+  --game-field-width: 160px;
+
   --spacing-sm: 0.75em;
   --spacing-md: 1em;
   --spacing-lg: 1.5em;
@@ -236,7 +239,7 @@ button:not(:disabled):active {
 /*This would all go into the global.css file*/
 [data-tooltip] {
   position: relative;
-  z-index: 2;
+  z-index: 5 !important;
   display: block;
 }
 

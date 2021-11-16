@@ -35,6 +35,29 @@ class Mongo {
     }
   }
 
+  public async startGame (query: any): Promise<InsertOneResult<any>> {
+    let document!: InsertOneResult<any>;
+
+    try {
+      document = await this._db.collection<any>("games").insertOne(query);
+    } catch (error) {
+      this._handleError(error);
+    }
+
+    return document
+  }
+  public async findGame (query: any): Promise<any | undefined> {
+    let document!: any | null;
+
+    try {
+      document = await this._db.collection<any>("games").findOne(query);
+    } catch (error) {
+      this._handleError(error);
+    }
+
+    return document ? document : undefined;
+  }
+
   public async findPlayer (query: QueryPlayerParams): Promise<Player | undefined> {
     let document!: Player | null;
 

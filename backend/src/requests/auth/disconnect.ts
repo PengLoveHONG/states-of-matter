@@ -1,7 +1,7 @@
-import type {App} from "../../models/App"
+import type {Services} from "../../models/Services"
 
-const disconnect = async (app: App): Promise<void> => {
-  const {eos, io, mongo} = app;
+const disconnect = async (app: Services): Promise<void> => {
+  const {blockchain, io, mongo} = app;
 
   const {socket_id} = io;
   const playerMongo = await mongo.findAndUpdatePlayer({socket_id}, {
@@ -14,17 +14,17 @@ const disconnect = async (app: App): Promise<void> => {
   const {username, public_key} = playerMongo.value;
   const signature = playerMongo.value.signatures.signout;
 
-  const trx = await eos.pushAction("signout", {username, public_key, signature});
+  const trx = await blockchain.transact("signout", {username, public_key, signature});
 
   if (!trx) { return; }
 
-  const player = await eos.findPlayer(username);
+  const player = await blockchain.findPlayer(username);
 
   if (!player) { return; }
 
   //Vukasin
-  await eos.pushAction("leavelobby", { public_key, signature: playerMongo.value.signatures.leaveLobby });
-  const lobby = await eos.findLobby(player.account.lobby_id);
+  await blockchain.transact("leavelobby", { public_key, signature: playerMongo.value.signatures.leaveLobby });
+  const lobby = await blockchain.findLobby(player.account.lobby_id);
 
   if (!lobby) { return; }
 

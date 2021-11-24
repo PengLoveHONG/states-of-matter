@@ -1,4 +1,4 @@
-import type {App} from "../../models/App"
+import type {Services} from "../../models/Services"
 
 interface Signatures {
   signout: string;
@@ -12,13 +12,13 @@ interface Params {
   signatures: Signatures;
 }
 
-const signin = async (app: App, params: Params): Promise<void> => {
-  const {eos, io, mongo} = app;
+const signin = async (services: Services, params: Params): Promise<void> => {
+  const {blockchain, io, mongo} = services;
   const {username, public_key, signature, signatures} = params;
   let lobby;
   let game;
 
-  const trx = await eos.pushAction("signin", {public_key, signature});
+  const trx = await blockchain.transact("signin", {public_key, signature});
 
   if (!trx) { return; }
 
@@ -27,7 +27,7 @@ const signin = async (app: App, params: Params): Promise<void> => {
 
   if (!updated) { return; }
 
-  const player = await eos.findPlayer(username);
+  const player = await blockchain.findPlayer(username);
 
   if (!player) { return; }
 
@@ -36,7 +36,7 @@ const signin = async (app: App, params: Params): Promise<void> => {
 
   for (const friendname of friends) {
     const [friend, chat] = await Promise.all([
-      eos.findPlayer(friendname),
+      blockchain.findPlayer(friendname),
       mongo.findChat(username, friendname)
     ]);
 
@@ -49,7 +49,7 @@ const signin = async (app: App, params: Params): Promise<void> => {
   }
 
   if (player.account.lobby_id) {
-    lobby = await eos.findLobby(player.account.lobby_id);
+    lobby = await blockchain.findLobby(player.account.lobby_id);
 
     if (!lobby) { return; }
   } else if (player.account.game_id) {

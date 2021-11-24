@@ -1,11 +1,11 @@
-import type {App} from "../../models/App"
+import type {Services} from "../../models/Services"
 
 interface Params {
   username: string;
 }
 
-const getPrivateKeyHash = async (app: App, params: Params): Promise<void> => {
-  const {io, mongo} = app;
+const getPrivateKeyHash = async (services: Services, params: Params): Promise<void> => {
+  const {io, mongo} = services;
   const {username} = params;
   const player = await mongo.findPlayer({username});
 

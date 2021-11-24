@@ -1,8 +1,8 @@
-import type {App} from "../../models/App";
+import type {Services} from "../../models/Services";
 
 interface Params {}
 
-const signout = async (app: App, params: Params): Promise<void> => {
+const signout = async (services: Services, params: Params): Promise<void> => {
   console.log(params);
 };
 

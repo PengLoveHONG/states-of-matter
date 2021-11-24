@@ -1,4 +1,4 @@
-import type {App} from "../../models/App";
+import type {Services} from "../../models/Services";
 
 interface Params {
   game_id: number;
@@ -6,15 +6,15 @@ interface Params {
   signature: string;
 }
 
-const exitGame = async (app: App, params: Params): Promise<void> => {
-  const {eos, io, mongo} = app;
+const exitGame = async (services: Services, params: Params): Promise<void> => {
+  const {blockchain, io, mongo} = services;
   const {game_id} = params;
 
-  const game = await eos.findGame(game_id);
+  const game = await blockchain.findGame(game_id);
 
   if (!game) { return; }
 
-  const trx = await eos.pushAction("endgame", params);
+  const trx = await blockchain.transact("endgame", params);
 
   if (!trx) { return; }
 

@@ -1,4 +1,4 @@
-import type {App} from "../../models/App";
+import type {Services} from "../../models/Services";
 
 interface Params {
   friendname: string;
@@ -6,11 +6,10 @@ interface Params {
   signature: string;
 }
 
-const unblock = async (app: App, params: Params): Promise<void> => {
-  const {eos, io} = app;
+const unblock = async (services: Services, params: Params): Promise<void> => {
+  const {blockchain, io} = services;
   const {friendname} = params;
-
-  const transaction = await eos.pushAction("unblckfriend", params);
+  const transaction = await blockchain.transact("unblckfriend", params);
 
   if (!transaction) { return; }
 

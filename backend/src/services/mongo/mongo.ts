@@ -1,5 +1,14 @@
-import type {Db, DeleteResult, Document, FindOneAndUpdateOptions, InsertOneResult, ModifyResult, UpdateResult} from "mongodb";
-import type {Socket} from "socket.io";
+import Service from "../service";
+
+import type {
+  DeleteResult,
+  Document,
+  FindOneAndUpdateOptions,
+  InsertOneResult,
+  ModifyResult,
+  UpdateResult
+} from "mongodb";
+
 import type {
   QueryPlayerParams,
   InsertPlayerParams,
@@ -8,21 +17,17 @@ import type {
   Msg
 } from "./mongo.models";
 
-class Mongo {
-  constructor (
-    private readonly _db: Db,
-    private readonly _socket: Socket
-  ) {}
-
+class Mongo extends Service {
   private _handleError (error: unknown): void {
     console.error(error);
-    this._socket.emit("notification", {msg: JSON.stringify(error)});
+    this._apis.socket.emit("notification", {msg: JSON.stringify(error)});
   }
 
   public async getSocketIds(users: string[]): Promise<any[] | undefined> {
     try {
       const socketIds = await this
-        ._db
+        ._apis
+        .mongo
         .collection<Player>("players")
         .find({username: {$in: users}})
         .project({_id: 0, socket_id: 1})
@@ -39,7 +44,7 @@ class Mongo {
     let document!: InsertOneResult<any>;
 
     try {
-      document = await this._db.collection<any>("games").insertOne(query);
+      document = await this._apis.mongo.collection<any>("games").insertOne(query);
     } catch (error) {
       this._handleError(error);
     }
@@ -50,7 +55,7 @@ class Mongo {
     let document!: any | null;
 
     try {
-      document = await this._db.collection<any>("games").findOne(query);
+      document = await this._apis.mongo.collection<any>("games").findOne(query);
     } catch (error) {
       this._handleError(error);
     }
@@ -62,7 +67,7 @@ class Mongo {
     let document!: Player | null;
 
     try {
-      document = await this._db.collection<Player>("players").findOne(query);
+      document = await this._apis.mongo.collection<Player>("players").findOne(query);
     } catch (error) {
       this._handleError(error);
     }
@@ -74,7 +79,7 @@ class Mongo {
     let inserted!: InsertOneResult<Player>;
 
     try {
-      inserted = await this._db.collection<Player>("players").insertOne(params);
+      inserted = await this._apis.mongo.collection<Player>("players").insertOne(params);
     } catch (error) {
       this._handleError(error);
     }
@@ -87,7 +92,7 @@ class Mongo {
 
     try {
       update = await this
-        ._db
+        ._apis.mongo
         .collection<Player>("players")
         .updateOne(query, {$set: params});
     } catch (error) {
@@ -106,7 +111,7 @@ class Mongo {
 
     try {
       result = await this
-        ._db
+        ._apis.mongo
         .collection<Player>("players")
         .findOneAndUpdate(query, {$set: params}, options);
     } catch (error) {
@@ -120,7 +125,7 @@ class Mongo {
     let document!: Document | null;
 
     try {
-      document = await this._db.collection("chats").findOne({
+      document = await this._apis.mongo.collection("chats").findOne({
         players: {$all: [playerA, playerB]}
       });
     } catch (error) {
@@ -134,7 +139,7 @@ class Mongo {
     let inserted!: InsertOneResult<Document>;
 
     try {
-      inserted = await this._db.collection("chats").insertOne({
+      inserted = await this._apis.mongo.collection("chats").insertOne({
         players: [playerA, playerB],
         messages: []
       });
@@ -149,7 +154,7 @@ class Mongo {
     let deleteResult!: DeleteResult;
 
     try {
-      deleteResult = await this._db.collection("chats").deleteOne({
+      deleteResult = await this._apis.mongo.collection("chats").deleteOne({
         players: {
           $all: [playerA, playerB]
         }
@@ -166,7 +171,7 @@ class Mongo {
     let updated!: UpdateResult;
 
     try {
-      updated = await this._db.collection("chats").updateOne({
+      updated = await this._apis.mongo.collection("chats").updateOne({
         players: {$all: players}
       }, {
         $push: {

@@ -1,4 +1,4 @@
-import type {App} from "../../models/App";
+import type {Services} from "../../models/Services";
 
 interface Params {
   username: string;
@@ -6,11 +6,11 @@ interface Params {
   private_key_hash: string;
 }
 
-const signup = async (app: App, params: Params): Promise<void> => {
-  const {eos, io, mongo} = app;
+const signup = async (services: Services, params: Params): Promise<void> => {
+  const {blockchain, io, mongo} = services;
   const {username, public_key, private_key_hash} = params;
 
-  const trx = await eos.pushAction("signup", {username, public_key});
+  const trx = await blockchain.transact("signup", {username, public_key});
 
   if (!trx) { return; }
 

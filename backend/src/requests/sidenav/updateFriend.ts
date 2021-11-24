@@ -1,12 +1,12 @@
-import type {App} from "../../models/App";
+import type {Services} from "../../models/Services";
 
 interface Params { username: string; }
 
-const updateFriend = async (app: App, params: Params): Promise<void> => {
-  const {eos, mongo, io} = app;
+const updateFriend = async (services: Services, params: Params): Promise<void> => {
+  const {blockchain, mongo, io} = services;
   const {username} = params;
 
-  const player = await eos.findPlayer(username);
+  const player = await blockchain.findPlayer(username);
 
   if (!player) { return; }
 

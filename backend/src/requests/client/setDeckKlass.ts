@@ -1,4 +1,4 @@
-import type {App} from "../../models/App";
+import type {Services} from "../../models/Services";
 
 interface Params {
   id: number;
@@ -7,11 +7,11 @@ interface Params {
   signature: string;
 }
 
-const setDeckKlass = async (app: App, params: Params): Promise<void> => {
-  const {eos, io} = app;
+const setDeckKlass = async (services: Services, params: Params): Promise<void> => {
+  const {blockchain, io} = services;
   const {id, klass} = params;
 
-  const trx = await eos.pushAction("setdeckklass", params);
+  const trx = await blockchain.transact("setdeckklass", params);
 
   if (!trx) { return; }
 

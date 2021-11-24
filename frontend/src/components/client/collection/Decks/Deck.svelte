@@ -25,11 +25,14 @@
   export {deck};
 </script>
 
-<style>
+<style lang="scss">
+  @import "../../../../styles/mixins";
+  @import "../../../../styles/variables";
+
   .deck {
     position: relative;
     /* height: 320px; */
-    width: 256px;
+    width: 160px;
     margin: 0 var(--spacing-md) var(--spacing-md) 0;
     box-shadow: var(--elevation-sm);
     overflow: hidden;
@@ -46,6 +49,7 @@
     background-image: linear-gradient(to top, rgba(21, 21, 21, 1), rgba(21, 21, 21, 0.5));
     box-sizing: border-box;
     z-index: 1;
+    font-size: $font-md;
   }
   .deck__footer__info {
     flex-grow: 1;
@@ -58,84 +62,119 @@
   }
 
   .hero {
-    height: 256px;
-    width: 100%;
-    /* display: flex; */
-    /* margin: 0 0 var(--spacing-md) var(--spacing-md); */
-    background-color: rgb(var(--dark-grey));
-    box-shadow: var(--elevation-md);
     position: relative;
+    height: $game-field-height;
+    width: $game-field-width;
+    box-shadow: $elevation-sm;
+    margin: 0 var(--spacing-md) var(--spacing-md) 0;
 
-    border: 1px solid red;
+    &__img {
+      height: $game-field-height;
+      width: $game-field-width;
+      display: block;
+    }
   }
-  .hero__img {
-    height: 256px;
-    width: 100%;
-  }
+
+  $stat-dimension: 32px;
 
   .circle-stat-green,
   .circle-stat-orange,
   .circle-stat-red,
   .circle-stat-yellow,
   .circle-stat-purple,
-  .circle-stat-magic {
+  .circle-stat-blue,
+  .circle-stat-gas {
     position: absolute;
-    height: 40px;
-    width: 40px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    box-shadow: var(--elevation-md);
+    height: $stat-dimension;
+    width: $stat-dimension;
+    @include d-flex(column, center, center);
+    background-color: rgba(var(--dark-grey), 0.9);
     border-radius: 50%;
+    box-shadow: $elevation-md;
     cursor: pointer;
-    font-size: 0.8rem;
+    font-size: $font-sm;
   }
 
-  .circle-stat-magic:hover .tooltip {
-    display: initial;
+  .circle-ability {
+    position: absolute;
+background-color: rgba(var(--dark-grey), 0.9);
+    border-radius: 50%;
+    box-shadow: $elevation-md;
+    cursor: pointer;
+    font-size: $font-sm;
+    @include d-flex(column, center, center);
+    bottom: 48px;
+    height: 48px;
+    width: 48px;
+    left: 50%;
+    transform: translateX(-50%);
+    border: 2px solid $purple;
+    font-size: $font-md;
   }
   .circle-stat-yellow {
-    bottom: -5%;
-    left: calc(50% - 40px / 2);
-    background-color: rgb(var(--yellow));
+    bottom: $stat-dimension;
+    left: 4px;
+    border: 2px solid rgb(var(--yellow));
   }
   .circle-stat-green {
-    bottom: 0;
-    right: 0;
-    background-color: rgb(var(--green));
+    bottom: 4px;
+    right: $stat-dimension;
+    border: 2px solid $green;
   }
   .circle-stat-orange {
-    bottom: 0;
-    left: 0;
-    background-color: rgb(var(--orange));
+    bottom: 4px;
+    left: $stat-dimension;
+    border: 2px solid $orange;
   }
   .circle-stat-red {
-    bottom: -5%;
-    left: calc(50% - 40px / 2);
-    background-color: rgb(var(--red));
+    bottom: $stat-dimension;
+    left: 4px;
+    border: 2px solid $red;
+  }
+  .circle-stat-gas {
+    bottom: $stat-dimension;
+    left: 4px;
+    border: 2px solid #23835b;
   }
   .circle-stat-purple {
-    top: 0;
-    left: 0;
-    background-color: rgb(var(--purple));
+    bottom: $stat-dimension;
+    left: 4px;
+    border: 2px solid $purple;
   }
-  .circle-stat-magic {
-    top: 0;
-    right: 0;
-    background-color: rgb(var(--purple));
+  .circle-stat-blue {
+    bottom: $stat-dimension;
+    right: 4px;
+    border: 2px solid $blue;
   }
 
+  .header {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    padding: $spacing-sm;
+    @include d-flex(row, center, space-between);
+    background-color: rgb(var(--dark-grey), 0.9);
+    box-sizing: border-box;
+    cursor: pointer;
+    font-size: $font-md;
+
+    &:hover .tooltip { display: initial; }
+    // font-size: $font-md;
+  }
   .tooltip {
     display: none;
     position: absolute;
-    top: 100%;
-    right: 0;
+    top: 32px;
+    left: 50%;
+    transform: translateX(-50%);
     height: auto;
     width: 180px;
     padding: var(--spacing-sm);
-    background-color: rgb(var(--light-grey));
+    background-color: rgba(var(--light-grey), 0.95);
     box-shadow: var(--elevation-lg);
+    font-size: 12px;
+    z-index: 100;
   }
 </style>
 
@@ -170,19 +209,23 @@
 
 </div> -->
 
-<div class="deck">
+
+
+
+<!-- <div class="deck"> -->
   <div class="hero" on:click={() => selectDeck(deck.id)}>
-
-    <img
-      class="hero__img"
-      src="assets/classes/{deck.klass}_hero.jpg"
-      alt="Hero">
-
-    <div class="circle-stat-purple">
-      <i class="fas fa-mask"></i>
+    <div class="header">
+      <span>{hero.name}</span>
+      <i class="fas fa-mask fa-fw"></i>
+  
+      <div class="tooltip">
+        {@html hero.special.effect}
+      </div>
     </div>
-
-    <div class="circle-stat-green">
+  
+    <img class="hero__img" src="assets/classes/{deck.klass}_hero.jpg" alt="Hero">
+  
+    <div class="circle-stat-green" data-tooltip="Health">
       <div>
         <i class="fas fa-heart"></i>
       </div>
@@ -190,8 +233,8 @@
         {hero.hp}
       </div>
     </div>
-
-    <div class="circle-stat-orange">
+  
+    <div class="circle-stat-orange" data-tooltip="Damage">
       <div>
         <i class="fas fa-fire"></i>
       </div>
@@ -199,7 +242,20 @@
         {hero.damage}
       </div>
     </div>
-
+  
+    <div class="circle-ability" data-tooltip="Special Ability">
+      <i class="fas fa-medkit fa-2x fa-fw"></i>
+    </div>
+  
+    <div class="circle-stat-blue" data-tooltip="Mana">
+      <div>
+        <i class="fas fa-battery-full"></i>
+      </div>
+      <div>
+        100
+      </div>
+    </div>
+  
     {#if deck.klass === 1}
       <div class="circle-stat-yellow">
         <div>
@@ -219,8 +275,13 @@
         </div>
       </div>
     {:else if deck.klass === 3}
-      <div class="stat f--orange">
-        <i class="fas fa-radiation"></i> {hero.special.amount}
+      <div class="circle-stat-gas">
+        <div>
+          <i class="fas fa-radiation"></i>
+        </div>
+        <div>
+          {hero.special.amount}
+        </div>
       </div>
     {:else if deck.klass === 4}
       <div class="circle-stat-red">
@@ -228,70 +289,35 @@
           <i class="fas fa-khanda"></i>
         </div>
         <div>
-          {hero.special.amount}%
+          {hero.special.amount}
         </div>
       </div>
     {/if}
+    
 
-    <div class="circle-stat-magic">
-      <div>
-        <i class="fas fa-magic"></i>
+    <div class="deck__footer">
+      <div class="deck__footer__info">
+        <div>{deck.name}</div>
+        <div>
+          {deck.cardsInDeck} / 30
+          {#if deck.cardsInDeck < 30}
+            <i class="fas fa-exclamation fa-fw"></i>
+          {:else}
+            <i class="fas fa-check fa-fw"></i>
+          {/if}
+        </div>
       </div>
-      <div class="tooltip">
-        <div>
-          {hero.name}
-        </div>
-        <div>
-          {@html hero.special.effect}
-        </div>
+    
+      <div class="deck__footer__actions">
+        <button class="btn--icon" on:click={() => changeDeckClass(deck.id)}>
+          <i class="fas fa-exchange-alt fa-fw"></i>
+        </button>
+        <button class="btn--icon" on:click={() => changeDeckName(deck.id)}>
+          <i class="fas fa-edit fa-fw"></i>
+        </button>
       </div>
     </div>
   </div>
-  <!-- <div>
-    <p class="hero__effect">
-      {#if deck.klass === 1}
-        <span class="stat f--yellow">
-          <i class="fas fa-shield-alt fa-fw"></i>
-        </span>
-      {:else if deck.klass === 2}
-        <span class="stat f--purple">
-          <i class="fas fa-tint"></i>
-        </span>
-      {:else if deck.klass === 3}
-        <span class="stat f--orange">
-          <i class="fas fa-radiation"></i>
-        </span>
-      {:else if deck.klass === 4}
-        <span class="stat f--red">
-          <i class="fas fa-khanda"></i>
-        </span>
-      {/if}
-      {hero.special.name}
-      <img class="hero__icon" src="assets/classes/{klass}.png" alt="Class"> {hero.special.name}
-      <br><br>
-      {@html hero.special.effect}
-    </p>
-  </div> -->
-  <div class="deck__footer">
-    <div class="deck__footer__info">
-      <div>{deck.name}</div>
-      <div>
-        {deck.cardsInDeck} / 30
-        {#if deck.cardsInDeck < 30}
-          <i class="fas fa-exclamation fa-fw"></i>
-        {:else}
-          <i class="fas fa-check fa-fw"></i>
-        {/if}
-      </div>
-    </div>
+ 
   
-    <div class="deck__footer__actions">
-      <button class="btn--icon" on:click={() => changeDeckClass(deck.id)}>
-        <i class="fas fa-exchange-alt fa-fw"></i>
-      </button>
-      <button class="btn--icon" on:click={() => changeDeckName(deck.id)}>
-        <i class="fas fa-edit fa-fw"></i>
-      </button>
-    </div>
-  </div>
-</div>
+<!-- </div> -->

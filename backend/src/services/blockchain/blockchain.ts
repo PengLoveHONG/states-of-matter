@@ -1,21 +1,23 @@
 import {RpcError} from "eosjs";
-import settings from "../settings.js";
+import settings from "../../settings.js";
 
-import type {Api} from "eosjs";
-import type {GetTableRowsResult, PushTransactionArgs, ReadOnlyTransactResult} from "eosjs/dist/eosjs-rpc-interfaces";
+import type {
+  GetTableRowsResult,
+  PushTransactionArgs,
+  ReadOnlyTransactResult
+} from "eosjs/dist/eosjs-rpc-interfaces";
+
 import type {TransactResult} from "eosjs/dist/eosjs-api-interfaces";
-import type {Socket} from "socket.io";
-import type {Game} from "../models/Game";
-import type {Lobby} from "../models/Lobby";
-import type {Player} from "../models/Player";
+import type {Apis} from "../../models/Apis.js";
+import type {Game} from "../../models/Game.js";
+import type {Lobby} from "../../models/Lobby.js";
+import type {Player} from "../../models/Player.js";
+import Service from "../service.js";
 
-class Eos {
-  constructor(
-    private readonly _api: Api,
-    private readonly _socket: Socket
-  ) {}
+class Blockchain extends Service {
+  private _handleError (name: string, error: unknown): void {
+    const {socket} = this._apis;
 
-  private _handleError(name: string, error: unknown): void {
     console.log("");
     console.log(`========== ${name} ==========`);
 
@@ -23,24 +25,24 @@ class Eos {
       const msg = error.json.error.details[0].message;
 
       console.error(msg);
-      this._socket.emit("notification", {msg});
+      socket.emit("notification", {msg});
     } else if (error instanceof Error) {
       const msg = error.message;
 
       console.error(msg);
-      this._socket.emit("notification", {msg});
+      socket.emit("notification", {msg});
     }
 
     console.log(`========== ${name} ==========`);
     console.log("");
   }
 
-  public async findPlayer(username: string): Promise<Player | undefined> {
+  public async findPlayer (username: string): Promise<Player | undefined> {
     const {contractAccount} = settings.eos;
     let table!: GetTableRowsResult;
 
     try {
-      table = await this._api.rpc.get_table_rows({
+      table = await this._apis.eos.rpc.get_table_rows({
         code: contractAccount,
         scope: contractAccount,
         table: "players",
@@ -55,12 +57,12 @@ class Eos {
     return table.rows[0];
   }
 
-  public async findLobby(lobby_id: number): Promise<Lobby | undefined> {
+  public async findLobby (lobby_id: number): Promise<Lobby | undefined> {
     const {contractAccount} = settings.eos;
     let table!: GetTableRowsResult;
 
     try {
-      table = await this._api.rpc.get_table_rows({
+      table = await this._apis.eos.rpc.get_table_rows({
         code: contractAccount,
         scope: contractAccount,
         table: "lobbies",
@@ -74,12 +76,12 @@ class Eos {
     return table.rows[0];
   }
 
-  public async findGame(game_id: number): Promise<Game | undefined> {
+  public async findGame (game_id: number): Promise<Game | undefined> {
     const {contractAccount} = settings.eos;
     let table!: GetTableRowsResult;
 
     try {
-      table = await this._api.rpc.get_table_rows({
+      table = await this._apis.eos.rpc.get_table_rows({
         code: contractAccount,
         scope: contractAccount,
         table: "games",
@@ -93,7 +95,7 @@ class Eos {
     return table.rows[0];
   }
 
-  public async pushAction(
+  public async transact (
     action: string,
     data: object
   ): Promise<TransactResult | ReadOnlyTransactResult | PushTransactionArgs | undefined> {
@@ -101,7 +103,7 @@ class Eos {
     let transaction!: TransactResult | ReadOnlyTransactResult | PushTransactionArgs;
 
     try {
-      transaction = await this._api.transact({
+      transaction = await this._apis.eos.transact({
         actions: [{
           account: contractAccount,
           name: action,
@@ -116,11 +118,11 @@ class Eos {
         expireSeconds: 30
       });
     } catch (error) {
-      this._handleError("pushAction", error);
+      this._handleError("transact", error);
     }
 
     return transaction;
   }
 }
 
-export default Eos;
+export default Blockchain;

@@ -1,4 +1,4 @@
-import type {App} from "../../models/App";
+import type {Services} from "../../models/Services";
 import type {DeckCard} from "../../models/Player";
 
 interface Params {
@@ -7,11 +7,10 @@ interface Params {
   signature: string;
 }
 
-const saveDeck = async (app: App, params: Params): Promise<void> => {
-  const {eos, io} = app;
+const saveDeck = async (services: Services, params: Params): Promise<void> => {
+  const {blockchain, io} = services;
   const {cards} = params;
-
-  const trx = await eos.pushAction("savedeck", params);
+  const trx = await blockchain.transact("savedeck", params);
 
   if (!trx) { return; }
 

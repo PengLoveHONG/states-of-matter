@@ -6,10 +6,10 @@ import fetch from "node-fetch";
 import {Server} from "socket.io";
 import settings from "./settings.js";
 import requests from "./requests/index.js";
-import {Eos, IO, Mongo} from "./services/index.js";
-import {mnemonicToSeed, generateMnemonic} from "bip39";
+import {Blockchain, Game, Io, Mongo} from "./services/index.js";
 
-import type {App} from "./models/App";
+import type {Apis} from "./models/Apis.js";
+import type {Services} from "./models/Services";
 
 const {
   mongo: {uri},
@@ -17,10 +17,6 @@ const {
   socket: {opts},
   server: {port}
 } = settings;
-
-console.log(`generateMnemonic()`);
-console.log(generateMnemonic());
-console.log(`generateMnemonic()`);
 
 const httpServer = createServer();
 const socketioServer = new Server(httpServer, opts);
@@ -32,19 +28,28 @@ const rpc = new JsonRpc(endpoint, {fetch});
 const signatureProvider = new JsSignatureProvider([contractKey]);
 const textDecoder = new TextDecoder();
 const textEncoder = new TextEncoder();
-const api = new Api({rpc, signatureProvider, textDecoder, textEncoder});
+const eosApi = new Api({rpc, signatureProvider, textDecoder, textEncoder});
 
 const requestKeys = Object.keys(requests) as Array<keyof typeof requests>;
 
 socketioServer.on("connection", (socket) => {
-  const eos = new Eos(api, socket);
-  const io = new IO(socketioServer, socket);
-  const mongo = new Mongo(mongoDb, socket);
-  const app: App = {eos, io, mongo};
+  const apis: Apis = {
+    eos: eosApi,
+    mongo: mongoDb,
+    socket,
+    io: socketioServer
+  };
+
+  const services: Services = {
+    blockchain: new Blockchain(apis),
+    game: new Game(apis),
+    io: new Io(apis),
+    mongo: new Mongo(apis)
+  };
 
   requestKeys.forEach((request) => {
-    io.on(request, (params: any = {}) => {
-      requests[request](app, params);
+    socketioServer.on(request, (params: any = {}) => {
+      requests[request](services, params);
     });
   });
 });

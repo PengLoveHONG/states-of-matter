@@ -1,4 +1,4 @@
-import type {App} from "../models/App";
+import type {Services} from "../models/Services";
 
 interface Params {
   sender: string;
@@ -7,8 +7,8 @@ interface Params {
   date: Date;
 }
 
-const sendChatMsg = async (app: App, params: Params): Promise<void> => {
-  const {io, mongo} = app;
+const sendChatMsg = async (services: Services, params: Params): Promise<void> => {
+  const {io, mongo} = services;
   const {sender, receiver, text, date} = params;
   const msg = await mongo.pushChatMsg([sender, receiver], {sender, text, date});
 

@@ -1,4 +1,4 @@
-import type {App} from "../../models/App";
+import type {Services} from "../../models/Services";
 
 interface Params {
   lobby_id: number;
@@ -6,21 +6,21 @@ interface Params {
   signature: string;
 }
 
-const startGame = async (app: App, params: Params): Promise<void> => {
-  const {eos, io, mongo} = app;
+const startGame = async (services: Services, params: Params): Promise<void> => {
+  const {blockchain, io, mongo} = services;
   const {lobby_id} = params;
 
-  const lobby = await eos.findLobby(lobby_id);
+  const lobby = await blockchain.findLobby(lobby_id);
 
   if (!lobby) { return; }
 
-  const transaction = await eos.pushAction("startgame", params);
+  const transaction = await blockchain.transact("startgame", params);
 
   if (!transaction) { return; }
 
   const [playerA, playerB] = await Promise.all([
-    eos.findPlayer(lobby.host.username),
-    eos.findPlayer(lobby.challengee.username)
+    blockchain.findPlayer(lobby.host.username),
+    blockchain.findPlayer(lobby.challengee.username)
   ]);
 
   if (!playerA || !playerB) { return; }

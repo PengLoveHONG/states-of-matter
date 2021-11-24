@@ -1,5 +1,6 @@
-import Eos from "./eos.js";
-import IO from "./io.js";
+import Blockchain from "./blockchain/blockchain.js";
+import Game from "./game/game.js";
+import Io from "./io/io.js";
 import Mongo from "./mongo/mongo.js";
 
-export {Eos, IO, Mongo};
+export {Blockchain, Game, Io, Mongo};

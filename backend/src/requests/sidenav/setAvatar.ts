@@ -1,4 +1,4 @@
-import type {App} from "../../models/App";
+import type {Services} from "../../models/Services";
 
 interface Params {
   avatar_id: number;
@@ -7,13 +7,13 @@ interface Params {
   signature: string;
 }
 
-const setAvatar = async (app: App, params: Params): Promise<void> => {
-  const {eos, io, mongo} = app;
+const setAvatar = async (services: Services, params: Params): Promise<void> => {
+  const {blockchain, io, mongo} = services;
   const {avatar_id, username, public_key, signature} = params;
 
   const [trx, player] = await Promise.all([
-    eos.pushAction("setavatar", {avatar_id, public_key, signature}),
-    eos.findPlayer(username)
+    blockchain.transact("setavatar", {avatar_id, public_key, signature}),
+    blockchain.findPlayer(username)
   ]);
 
   if (!trx || !player) { return; }

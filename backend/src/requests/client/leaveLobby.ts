@@ -1,4 +1,4 @@
-import type {App} from "../../models/App";
+import type {Services} from "../../models/Services";
 
 interface Params {
   lobby_id: number;
@@ -6,15 +6,15 @@ interface Params {
   signature: string;
 }
 
-const leaveLobby = async (app: App, params: Params): Promise<void> => {
-  const {eos, io, mongo} = app;
+const leaveLobby = async (services: Services, params: Params): Promise<void> => {
+  const {blockchain, io, mongo} = services;
   const {lobby_id, public_key, signature} = params;
 
-  const trx = await eos.pushAction("leavelobby", {public_key, signature});
+  const trx = await blockchain.transact("leavelobby", {public_key, signature});
 
   if (!trx) { return; }
 
-  const lobby = await eos.findLobby(lobby_id);
+  const lobby = await blockchain.findLobby(lobby_id);
 
   if (!lobby) { return; }
 

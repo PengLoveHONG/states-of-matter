@@ -1,6 +1,9 @@
+$game-card-height: 192px;
+$game-card-width: 160px;
+
 $game-field-height: 192px;
 $game-field-width: 160px;
-//192px 160px
+
 $spacing-sm: 0.7em;
 $spacing-md: 0.8em;
 $spacing-lg: 1em;
@@ -25,10 +28,7 @@ $font-sm: 0.7rem;
 $font-md: 0.8rem;
 $font-lg: 1rem;
 
-$elevation-sm:
-  0 3px 1px -2px rgba(0 0 0 / 20%),
-  0 2px 2px 0 rgba(0,0,0,.14),
-  0 1px 5px 0 rgba(0,0,0,.12);
+$elevation-sm: 0 3px 1px -2px rgba(0 0 0 / 20%), 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 1px 5px 0 rgba(0, 0, 0, 0.12);
 $elevation-md:
   0 2px 4px -1px rgba(0,0,0,.2),
   0 4px 5px 0 rgba(0,0,0,.14),

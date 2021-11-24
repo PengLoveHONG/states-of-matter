@@ -1,4 +1,4 @@
-import type {App} from "../../models/App";
+import type {Services} from "../../models/Services";
 
 interface Params {
   friendname: string;
@@ -7,17 +7,17 @@ interface Params {
   signature: string;
 }
 
-const acceptFriend = async (app: App, params: Params): Promise<void> => {
-  const {eos, io, mongo} = app;
+const acceptFriend = async (services: Services, params: Params): Promise<void> => {
+  const {blockchain, io, mongo} = services;
   const {friendname, username, public_key, signature} = params;
 
-  const trx = await eos.pushAction("acceptfriend", {friendname, public_key, signature});
+  const trx = await blockchain.transact("acceptfriend", {friendname, public_key, signature});
 
   if (!trx) { return; }
 
   const [sender, receiver, receiverMongo, inserted] = await Promise.all([
-    eos.findPlayer(params.username),
-    eos.findPlayer(params.friendname),
+    blockchain.findPlayer(params.username),
+    blockchain.findPlayer(params.friendname),
     mongo.findPlayer({username: params.friendname}),
     mongo.insertChat(username, friendname)
   ]);

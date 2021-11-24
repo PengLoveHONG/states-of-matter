@@ -1,66 +1,112 @@
 const solidHero = {
   name: "Solid Hero",
+  klass: 1,
   hp: 1500,
   damage: 55,
   special: {
     name: "Rock Solid",
     amount: 25,
     effect: `
-    Solid Hero and Cards take % Health reduced damage from all sources.
-    Whenever one of your minions die, gain additional 1% reduced damage.
+      <span class="f--purple">& Passive</span>
+      <br>
+      Solid Hero and Minions take % reduced damage from all sources.
+      <hr>
+      <span class="f--purple">* Spike Shield</span>
+      [<span class="f--blue">10 <i class="fas fa-battery-full"></i></span>]
+      <br>
+      Solid Hero and Minions gain a stack of Spike Shield. After their next combat,
+      they will deal additional damage based on damage that they block with their Passive, consuming the stack.
     `
   }
 };
 
 const liquidHero = {
   name: "Liquid Hero",
+  klass: 2,
   hp: 600,
   damage: 35,
   special: {
-    name: "Absorption",
+    name: "Fountain of Life",
     amount: 50,
     effect: `
-      <span class="f--purple">Passive</span><br>
-      Liquid Hero and Minions have % chance to absorb all incoming damage.
-      When this occurs, they gain +1% chance.<br>
-      <span class="f--purple">Active</span> <i class="fas fa-battery-full"></i>
-      30<br>
+      <span class="f--purple">Mourn</span>
+      <br>
+      Liquid Hero and Minions heal
+      <span class="f--green">50% missing <i class="fas fa-heart"></i></span>
+      whenever a Liquid Minion dies.
+      <hr>
+      <span class="f--purple">Rejuvenation</span>
+      [<span class="f--blue">30 <i class="fas fa-battery-full"></i></span>]
+      <br>
       Liquid hero and minions heal
-      <span class="f--green">25% missing <i class="fas fa-heart"></i></span>.
+      <span class="f--green">10% missing <i class="fas fa-heart"></i></span>.
     `
   }
 };
 
 const gasHero = {
   name: "Gas Hero",
+  klass: 3,
   hp: 1000,
   damage: 10,
   special: {
     name: "Neurotoxin",
     amount: 1,
     effect: `
-      Gas hero and minions attacks release a deadly poison on enemy hero and
-      minions. They will lose
-      <span class="f--green">1 <i class="fas fa-heart"></i></span>
-      for each Neurotoxin stack applied. Whenever an enemy minion dies to
-      neurotoxin, increase Neurotoxin damage dealt by 1.
+      <span class="f--purple">& Vanish</span>
+      <br>
+      Gas Hero and Minions hide in the gas clouds, having % chance to evade all
+      damage when being attacked.
+      <hr>
+      <span class="f--purple">* Neurotoxin</span>
+      [<span class="f--blue">25 <i class="fas fa-battery-full"></i></span>]
+      <br>
+      Release a deadly neurotoxin on the enemy field, causing enemy Hero and
+      Minions to lose <span class="f--green">1 <i class="fas fa-heart"></i></span>
+      at the end of each turn per Neurotoxin stack.
     `
   }
 };
 
 const plasmaHero = {
   name: "Plasma Hero",
-  hp: 800,
+  klass: 4,
   damage: 70,
+  hp: 800,
+  // mana: 150,
+  // passive: {
+  //   amount: 33,
+  //   text: `
+  //     <span class="f--purple">Passive</span><br>
+  //     Plasma hero and minions have % chance to deal
+  //     <span class="f--red">Double Damage <i class="fas fa-khanda"></i></span>
+  //     with their attacks.
+  //   `
+  // },
+  // active: {
+  //   manaCost: 35,
+  //   text: `
+  //     <span class="f--purple">Active</span>
+  //     [10 <i class="fas fa-battery-full fa-fw"></i>]<br>
+  //     Sacrifice any Minion to overcharge Plasma Hero and Minions, granting them
+  //     <span class="f--red">+100% <i class="fas fa-khanda"></i></span>
+  //     until the end of your turn.
+  //   `
+  // }
   special: {
-    name: "Double Damage",
-    amount: 30,
+    name: "Neurotoxin",
+    amount: 1,
     effect: `
-      Plasma hero and minions have % chance to deal Double Damage
-      <span class="f--red"><i class="fas fa-khanda"></i></span>.
-      Chance is increased by additional 1% every time Plasma Hero or Minions
-      deal Double Damage
-      <span class="f--red"><i class="fas fa-khanda"></i></span>.
+      <span class="f--purple">Passive</span><br>
+      Plasma hero and minions have % chance to deal
+      <span class="f--red">Double Damage <i class="fas fa-khanda"></i></span>
+      with their attacks.
+      <hr>
+      <span class="f--purple">Active</span>
+       [10 <i class="fas fa-battery-full fa-fw"></i>]<br>
+       Sacrifice any Minion to overcharge Plasma Hero and Minions, granting them
+       <span class="f--red">+100% <i class="fas fa-khanda"></i></span>
+       until the end of your turn.
     `
   }
 }
